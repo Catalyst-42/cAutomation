@@ -1,0 +1,56 @@
+/* cResources.txt - displays the dynamics of resources
+ * -> Created by Catalyst
+ * -> v1.0
+ * -> import cResources
+ *
+ * Use arrows to change mode
+ */
+
+disable pause
+>                                                  
+
+var x = 2
+var y = 0
+var fineY = y
+var fineX = x
+y = fineY
+x = fineX + 1
+
+var Style = 0
+
+?key = leftBegin
+  ?Style = 0
+    Style = 1
+  :
+    Style--
+?key = rightBegin
+  ?Style = 1
+    Style = 0
+  :
+    Style++
+
+var Resources
+var ResourcesStart = [res.stone, res.wood, res.tar, res.bronze, res.ki, res.crystals, totalgp]
+var ResourcesLogos = ["o", "/", "≈", ":", "@", "♦", "*"]
+
+Resources = [res.stone, res.wood, res.tar, res.bronze, res.ki, res.crystals, totalgp]
+
+func Shorten(value)
+  var prefix = ""
+  ?math.Abs(value / 1000000) > 0
+    value = value / 1000000
+    prefix = "m"
+  
+  ?math.Abs(value / 1000) > 0
+    value = value / 1000
+    prefix = "k"
+
+  return value + prefix 
+
+for i = 0..Resources.Count()-1
+  ?Resources[i]-ResourcesStart[i] = 0 | Style = 0
+    >`@x+i*10@,@y@,#555,@ResourcesLogos[i]@ @Shorten(Resources[i])@
+  ?Resources[i]-ResourcesStart[i] < 0 & Style = 1
+    >`@x+i*10@,@y@,#f00,@ResourcesLogos[i]@ @Shorten(Resources[i]-ResourcesStart[i])@
+  ?Resources[i]-ResourcesStart[i] > 0 & Style = 1
+    >`@x+i*10@,@y@,#0f0,@ResourcesLogos[i]@ +@Shorten(Resources[i]-ResourcesStart[i])@

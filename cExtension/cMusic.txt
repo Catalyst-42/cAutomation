@@ -1,0 +1,209 @@
+?loc.begin
+  music.Stop()
+  var music_list = [
+    bronze_guardian_3,
+    bronze_guardian_4,
+    bronze_guardian_5,
+    bronze_guardian_cyan,
+    bronze_mine_0,
+    bronze_mine_1,
+    bronze_mine_2,
+    bronze_mine_3,
+    bronze_mine_4,
+    bronze_mine_5,
+    bronze_mine_cyan,
+    slave_outro_climb,
+    slave_outro_loop,
+    caustic_caves,
+    spider_boss,
+    cross_deadwood_river,
+    cross_deadwood_wind,
+    deadwood_0,
+    deadwood_1,
+    deadwood_2,
+    deadwood_3,
+    deadwood_4,
+    deadwood_5,
+    deadwood_cyan,
+    tree_boss,
+    waterfall_descent,
+    skeleton_boss,
+    undead_crypt_0,
+    undead_crypt_1,
+    undead_crypt_2,
+    undead_crypt_3,
+    undead_crypt_4,
+    undead_crypt_5,
+    undead_crypt_cyan,
+    undead_crypt_intro,
+    bridge_broken,
+    bridge_crossing,
+    icy_ridge_0,
+    icy_ridge_1,
+    icy_ridge_2,
+    icy_ridge_3,
+    icy_ridge_4,
+    icy_ridge_5,
+    icy_ridge_cyan,
+    yeti,
+    fire_loop,
+    fungus_forest_0,
+    fungus_forest_1,
+    fungus_forest_2,
+    fungus_forest_3,
+    fungus_forest_4,
+    fungus_forest_5,
+    fungus_forest_cyan,
+    mushroom_boss,
+    mushroom_boss_cyan,
+    shop,
+    rocky_plateau_0,
+    rocky_plateau_1,
+    rocky_plateau_2,
+    rocky_plateau_3,
+    rocky_plateau_4,
+    rocky_plateau_5,
+    rocky_plateau_epilogue,
+    rocky_plateau_fight,
+    rocky_plateau_talk,
+    nagaraja,
+    temple_0,
+    temple_1,
+    temple_2,
+    temple_3,
+    temple_4,
+    temple_5,
+    temple_cyan,
+    event_fall,
+    event_hamartia,
+    event_spring,
+    event_stonejam,
+    event_summer,
+    event_winter,
+    credits,
+    main_menu,
+    bone_factory,
+    osteophone,
+    uulaa]
+  var music_type = storage.Get('music', 0)
+
+  var main = ui.AddPanel()
+  var play_button = ui.AddButton()
+  var stop_button = ui.AddButton()
+  var play_previous = ui.AddButton()
+  var play_next = ui.AddButton()
+  var label = ui.AddText()
+  var show_plyer = ui.AddButton()
+  var hide_plyer = ui.AddButton()
+
+  main.style = ui.AddStyle("┌─┐###└─┘")
+  main.color = #7f7f7f
+  main.h = 6
+  main.w = 26
+  main.y = 5
+
+  main.Add(play_button)
+  main.Add(stop_button)
+  main.Add(play_previous)
+  main.Add(play_next)
+  main.Add(hide_plyer)
+
+  play_button.visible = inherit
+  stop_button.visible = inherit
+  play_previous.visible = inherit
+  play_next.visible = inherit
+  hide_plyer.visible = inherit
+
+  play_button.x = 2
+  stop_button.x = -3
+  play_previous.x = -7
+  play_next.x = 6
+  show_plyer.x = -1
+  hide_plyer.x = 3
+  
+  play_button.y = 2
+  stop_button.y = 2
+  play_previous.y = 2
+  play_next.y = 2
+  show_plyer.y = 2
+
+  play_button.h = 2
+  stop_button.h = 2
+  play_previous.h = 2
+  play_next.h = 2
+  show_plyer.h = 3
+  hide_plyer.h = 1
+  
+  play_button.w = 5
+  stop_button.w = 5
+  play_previous.w = 3
+  play_next.w = 3
+  show_plyer.w = 3
+  hide_plyer.w = 5
+
+  play_button.text = ">"
+  stop_button.text = "="
+  play_previous.text = "«"
+  play_next.text = "»"
+  show_plyer.text = "♫"
+  hide_plyer.text = "music"
+
+  show_plyer.dx = right
+  hide_plyer.dx = left
+  
+  hide_plyer.dy = top 
+
+  func play_music()
+    music.Play(music_list[music_type])
+
+  func stop_music()
+    music.Stop()
+
+  func next()
+    ?music_type = music_list.Count() - 1
+      music_type = 0
+    :
+      music_type++
+    storage.Set('music', music_type)
+    music.Stop()
+    music.Play(music_list[music_type])
+
+  func previous()
+    ?music_type = 0
+      music_type = music_list.Count() - 1
+    :
+      music_type--
+    storage.Set('music', music_type)
+    music.Stop()
+    music.Play(music_list[music_type])
+
+  func show()
+    main.visible = true
+    show_plyer.visible = false
+  
+  func hide()
+    main.visible = false
+    show_plyer.visible = true
+  
+  play_button.SetPressed(play_music)
+  stop_button.SetPressed(stop_music)
+  play_next.SetPressed(next)
+  play_previous.SetPressed(previous)
+  show_plyer.SetPressed(show)
+  hide_plyer.SetPressed(hide)
+  
+  main.visible = false
+
+?main.visible
+  >`@main.absoluteX+7@,@main.absoluteY@,#fff,[@music_type+1@/@music_list.Count()@]
+  >`@main.absoluteX+1@,@main.absoluteY+2@,#fff,> @music_list[music_type]@
+  ?music_type = 0
+    >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@music_list[music_list.Count()-1]@
+    >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@music_list[music_type+1]@
+
+  :?music_type = music_list.Count() - 1
+    >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@music_list[music_type-1]@
+    >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@music_list[0]@
+  :
+    >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@music_list[music_type-1]@
+    >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@music_list[music_type+1]@

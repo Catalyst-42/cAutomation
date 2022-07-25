@@ -1,0 +1,551 @@
+?loc.begin
+  var sounds = [
+    buy,
+    click,
+    confirm,
+    soul_stone,
+    sword_cast,
+    sword_hit,
+    wand_cast,
+    wand_hit,
+    player_kick,
+    player_punch,
+    stone_throw_cast,
+    stone_throw_hit,
+    grappling_cast,
+    grappling_hit,
+    grappling_idle,
+    hatchet_cast,
+    hatchet_hit,
+    shovel_cast,
+    torch_cast,
+    torch_hit,
+    torch_idle,
+    pickup_stone,
+    pickup_wood,
+    pickup_tar,
+    pickup_success,
+    soul_stone_drop,
+    wand_drop,
+    key_drop,
+    cross_deadwood_bump,
+    cross_deadwood_row,
+    cross_deadwood_splash,
+    ui_starfirst,
+    ui_starnew,
+    ui_starold1,
+    ui_starold2,
+    ui_starold3,
+    ui_starold4,
+    bronze_gate_open,
+    prompt_choice,
+    waterfall_hook_hit,
+    waterfall_splash,
+    haunted_gate_key_bounce_1,
+    haunted_gate_key_bounce_2,
+    haunted_gate_key_bounce_3,
+    haunted_gate_opening,
+    haunted_gate_point_lost,
+    haunted_gate_key_into_gate,
+    haunted_gate_shuffle,
+    haunted_gate_shuffle_fast,
+    haunted_gate_torch_off,
+    haunted_gate_torch_on,
+    haunted_gate_try_to_open,
+    paint_splat,
+    waterfall_land,
+    waterfall_rope_grab,
+    waterfall_rope_swing,
+    skeleton_boss_death,
+    skeleton_boss_legs_die,
+    spider_boss_death,
+    tree_boss_death,
+    mushroom_boss_death,
+    tree_boss_attack,
+    tree_boss_awake,
+    tree_boss_idle,
+    tree_boss_spike,
+    spider_boss_attack,
+    player_hit,
+    mushroom_boss_awake,
+    mushroom_boss_punch,
+    mushroom_boss_shoot,
+    skeleton_boss_arm1,
+    skeleton_boss_arm2,
+    skeleton_boss_attack,
+    skeleton_boss_idle,
+    skeleton_boss_bone_bounce,
+    skeleton_boss_arm_woosh,
+    equip,
+    unequip,
+    bat_attack_small,
+    bat_death_small,
+    bat_wing,
+    bat_wing_small,
+    spider_attack,
+    spider_death,
+    spider_death_small,
+    spider_eggs_spawn,
+    spider_walk,
+    scarab_awake,
+    scarab_bite,
+    scarab_death,
+    scarab_horn,
+    scarab_wings,
+    mosquito_attack,
+    mosquito_death,
+    mosquito_loop,
+    bronze_gate_locked,
+    bat_attack,
+    bat_death,
+    progress_1,
+    progress_2,
+    progress_3,
+    progress_4,
+    progress_5,
+    progress_6,
+    progress_7,
+    progress_8,
+    progress_9,
+    life_gain,
+    player_death,
+    logo_full,
+    logo_short,
+    smithy_hammer,
+    sightstone_cast,
+    error,
+    ranting_tree_halt,
+    treasure_close,
+    treasure_item_pop,
+    treasure_item_show,
+    treasure_open,
+    skeleton_boss_awake,
+    skeleton_boss_hand_slam,
+    level_up,
+    insta_kill,
+    spider_boss_awake,
+    metal_drop,
+    treasure_drop,
+    smithy_hammer_fail,
+    xp_tick,
+    crossbow_cast,
+    crossbow_hit,
+    wand_aether_cast,
+    wand_aether_hit,
+    wand_air_cast,
+    wand_air_hit,
+    wand_fire_cast,
+    wand_fire_hit,
+    wand_ice_cast,
+    wand_ice_hit,
+    wand_poison_cast,
+    wand_poison_hit,
+    wand_vigor_cast,
+    wand_vigor_hit,
+    skeleton_boss_arm_reconnect,
+    skeleton_boss_summon_minions,
+    mushroom_boss_fat_slam,
+    pickup_bronze,
+    temple_npc_chant,
+    temple_npc_clear_throat,
+    temple_npc_talk,
+    first_controller,
+    slave_npc,
+    slave_outro_chatter,
+    slave_outro_voice,
+    haunted_gate_npc_voice,
+    slave_outro_transition,
+    bronze_guardian_attack1,
+    bronze_guardian_attack2,
+    bronze_guardian_attack3,
+    bronze_guardian_death,
+    bronze_guardian_helmet,
+    bronze_guardian_power_up,
+    bronze_guardian_steps,
+    ant_attack,
+    ant_death,
+    ant_walk,
+    snail_attack,
+    snail_attack_small,
+    snail_death,
+    snail_death_small,
+    snail_walk,
+    ghost_death,
+    ghost_death_small,
+    skeletimmy_death,
+    skeletony_death,
+    skeletimmy_attack,
+    skeletony_attack,
+    skeletony_awake_a,
+    skeletony_awake_b,
+    skeletony_walk,
+    ghost_loop,
+    ghost_loop_small,
+    ghost_attack,
+    ghost_attack_small,
+    controller_death,
+    controller_whip_attack,
+    controller_whip_hit,
+    dominotaur_death,
+    dominotaur_whip_attack,
+    dominotaur_whip_hit,
+    mine_walker_death,
+    mine_walker_attack_a,
+    mine_walker_attack_b,
+    mine_walker_attack_hit,
+    mine_walker_awake,
+    mine_walker_step,
+    fire_elemental_attack,
+    fire_elemental_attack_hit,
+    fire_elemental_awake,
+    fire_elemental_death,
+    mine_walker_helmet_break,
+    ice_elemental_attack,
+    ice_elemental_attack_hit,
+    ice_elemental_awake,
+    ice_elemental_death,
+    ki_eater_attack,
+    ki_eater_attack_hit,
+    ki_eater_awake,
+    ki_eater_death,
+    ki_gobbler_attack,
+    ki_gobbler_attack_hit,
+    ki_gobbler_awake,
+    ki_gobbler_death,
+    ki_slerper_attack,
+    ki_slerper_attack_hit,
+    ki_slerper_awake,
+    ki_slerper_death,
+    bell_ringer_attack,
+    bell_ringer_attack_hit,
+    cult_guard_attack,
+    cult_guard_attack_hit,
+    cult_marksman_attack,
+    cult_marksman_attack_hit,
+    cult_sorcerer_attack,
+    cult_sorcerer_attack_hit,
+    cultist_death,
+    flying_serpent_loop,
+    poison_adept_attack,
+    poison_adept_attack_hit,
+    serpent_attack,
+    serpent_death,
+    serpent_handler_release,
+    serpent_hiss,
+    serpent_slither,
+    worm_rider_hop,
+    booklet_open,
+    booklet_turn_page,
+    booklet_close,
+    hammer_cast,
+    hammer_hit,
+    shield_dash,
+    fissure_break_apart,
+    fissure_unmake,
+    mindstone_off,
+    mindstone_on,
+    triskelion_fuse,
+    potion_berserk,
+    potion_cleansing,
+    potion_defensive,
+    potion_experience,
+    potion_healing,
+    potion_invisibility,
+    potion_lightning,
+    potion_lucky,
+    potion_strength,
+    potion_vampiric,
+    bronze_guardian_pulling_hammer,
+    bronze_guardian_removing_hammer,
+    bronze_guardian_turbine,
+    bronze_guardian_ears_ring,
+    bronze_guardian_fuse,
+    bronze_guardian_attack4,
+    yeti_attack,
+    yeti_attack_flick,
+    yeti_attack_hit,
+    yeti_awake_blow,
+    yeti_awake_explosion,
+    yeti_awake_inhale,
+    yeti_awake_lick,
+    yeti_blow,
+    yeti_blow_ice_wall,
+    yeti_death,
+    yeti_inhale,
+    yeti_inhale_lick,
+    nagaraja_awake_roar,
+    nagaraja_awake_swallow,
+    nagaraja_awake_tongue_1,
+    nagaraja_awake_tongue_2,
+    nagaraja_dead,
+    nagaraja_poison_attack,
+    nagaraja_poison_attack_hit,
+    nagaraja_wail,
+    nagaraja_wail_brick,
+    nagaraja_attack_eat,
+    nagaraja_attack_lick,
+    nagaraja_attack_swallow,
+    nagaraja_tongue_damaged,
+    nagaraja_tongue_lift,
+    nagaraja_tongue_smell,
+    nagaraja_tongue_wrap,
+    bearer3_talk,
+    bearer_attack,
+    bearer_attack_hit,
+    bearer_death,
+    bearer_stealing,
+    bearer_super_attack,
+    bearer_scream,
+    bearer4_talk,
+    bearer4_talk_evolving,
+    bearer_evolving,
+    elementalist_aether_attack,
+    elementalist_aether_attack_hit,
+    elementalist_aether_blink,
+    elementalist_death,
+    elementalist_fire_attack,
+    elementalist_fire_attack_hit,
+    elementalist_fire_blink,
+    elementalist_ice_attack,
+    elementalist_ice_attack_hit,
+    elementalist_ice_blink,
+    elementalist_poison_attack,
+    elementalist_poison_attack_hit,
+    elementalist_poison_blink,
+    elementalist_vigor_attack,
+    elementalist_vigor_attack_hit,
+    elementalist_vigor_blink,
+    bearer5_talk,
+    elementalist_evolving,
+    perfected_attack,
+    perfected_attack_hit,
+    perfected_death,
+    perfected_defense,
+    perfected_energy_ball,
+    perfected_energy_ball_hit,
+    perfected_summon,
+    perfected_talk,
+    epilogue_devolving,
+    epliogue_player_evolves,
+    epilogue_talk,
+    devolved_talk,
+    dysangelos_guidance,
+    dysangelos_guidance_1,
+    dysangelos_guidance_2,
+    dysangelos_guidance_3,
+    dysangelos_intro_talk,
+    ranting_tree_talk_halt,
+    ranting_tree_talk_again,
+    ranting_tree_talk_how_dare,
+    ranting_tree_talk_avenge,
+    ranting_tree_talk_get_out,
+    ranting_tree_talk_impressive,
+    ranting_tree_talk_very_well,
+    ranting_tree_talk_extra,
+    hans_talk_intro,
+    hans_talk_reward,
+    scotty_a_pleasure,
+    scotty_a_worthy_opponent,
+    scotty_deuced,
+    scotty_failte_back,
+    scotty_getting_good,
+    scotty_grr,
+    scotty_guess_which,
+    scotty_intro,
+    scotty_lets_harden,
+    scotty_make_ye_guess,
+    scotty_noo_jist,
+    scotty_perhaps_the_rules,
+    scotty_pick_some_treasure,
+    scotty_shall_we_up,
+    scotty_we_have_wee_use,
+    scotty_well_met,
+    scotty_well_then,
+    scotty_wizard,
+    scotty_wrong_choice,
+    scotty_hell_be_back,
+    scotty_out_of_treasure,
+    scotty_there_he_is,
+    nagaraja_choir,
+    mushroom_boss_split,
+    ant_hill,
+    treasure_drop_common,
+    treasure_drop_epic,
+    treasure_drop_giant,
+    treasure_drop_humble,
+    treasure_drop_rare,
+    dominotaur_awake,
+    fire_geyser,
+    ice_pillar,
+    treasure_item_cyan,
+    treasure_item_yellow,
+    treasure_item_green,
+    treasure_item_blue,
+    treasure_item_red,
+    treasure_item_rainbow,
+    ki_slerper_walk,
+    mindstone_found,
+    ghost_tomb_death,
+    perfected_fly_start,
+    perfected_fly_loop,
+    perfected_fly_end,
+    shop_door_open,
+    shop_door_enter,
+    scorpion_death,
+    bomb_cart_explosion,
+    bomb_cart_fuse,
+    bomb_cart_move,
+    bronze_gate_close,
+    poison_powerup,
+    acronian_cultist_power_up,
+    giant_ice_elemental_attack,
+    scout_dialog,
+    morel_punch,
+    falling_stonefolk,
+    scout_arrives,
+    scout_leaves,
+    scout_wing,
+    scout_focus,
+    dog_bark,
+    frog,
+    lost_item_boost,
+    treasure_item_lost,
+    blade_glow,
+    blade_pallas_attack,
+    blade_raise,
+    blade_drag,
+    auggie_voice,
+    pallas_voice,
+    quest_stone_jump,
+    quest_stone_unlock,
+    bardiche_cast,
+    boo_voice,
+    quarterstaff_cast,
+    air_hiss,
+    bang_go_forward,
+    fire_orbs,
+    open_note,
+    talisman_reveal,
+    fire_beast_1,
+    fire_beast_2,
+    uulaa_voice,
+    mask_summon_1,
+    mask_summon_2]
+  var sound_type = storage.Get('sound', 0)
+
+  var main = ui.AddPanel()
+  var play_button = ui.AddButton()
+  var play_previous = ui.AddButton()
+  var play_next = ui.AddButton()
+  var play_previous_100 = ui.AddButton()
+  var play_next_100 = ui.AddButton()
+  var label = ui.AddText()
+
+  main.style = ui.AddStyle("┌─┐###└─┘")
+  main.color = #7f7f7f
+  main.h = 7
+  main.w = 34
+  main.y = 5
+
+  play_button.x = 0
+  play_previous.x = -6
+  play_next.x = 5
+  play_previous_100.x = -10
+  play_next_100.x = 10
+
+  play_button.w = 6
+  play_previous.w = 5
+  play_next.w = 5
+  play_previous_100.w = 4
+  play_next_100.w = 4
+
+  play_button.h = 3
+  play_previous.h = 3
+  play_next.h = 3
+  play_previous_100.h = 3
+  play_next_100.h = 3
+
+  play_button.y = 2
+  play_previous.y = 2
+  play_next.y = 2
+  play_previous_100.y = 2
+  play_next_100.y = 2
+
+  play_button.text = "play"
+  play_previous.text = "<"
+  play_next.text = ">"
+  play_previous_100.text = "<<"
+  play_next_100.text = ">>"
+
+  main.Add(play_button)
+  main.Add(play_previous)
+  main.Add(play_next)
+  main.Add(play_previous_100)
+  main.Add(play_next_100)
+
+  func next()
+    ?sound_type = sounds.Count() - 1
+      sound_type = 0
+    :
+      sound_type++
+    storage.Set('sound', sound_type)
+
+  func previous()
+    ?sound_type = 0
+      sound_type = sounds.Count() - 1
+    :
+      sound_type--
+    storage.Set('sound', sound_type)
+
+  func next_100()
+    ?sound_type > sounds.Count() - 100 - 1
+      sound_type = sound_type + 100 - sounds.Count()
+    :
+      sound_type += 100
+    storage.Set('sound', sound_type)
+
+  func previous_100()
+    ?sound_type < 100
+      sound_type = sounds.Count() + sound_type - 100
+    :
+      sound_type -= 100
+    storage.Set('sound', sound_type)
+
+  play_next.SetPressed(next)
+  play_previous.SetPressed(previous)
+  play_next_100.SetPressed(next_100)
+  play_previous_100.SetPressed(previous_100)
+
+play_button.sound = sounds[sound_type]
+
+?sound_type < 100
+  play_previous_100.sound = sounds[sounds.Count() + sound_type - 100]
+:
+  play_previous_100.sound = sounds[sound_type-100]
+
+?sound_type > sounds.Count() - 100 - 1
+  play_next_100.sound = sounds[sound_type + 100 - sounds.Count()]
+:
+  play_next_100.sound = sounds[sound_type+100]
+
+>`@main.absoluteX+1@,@main.absoluteY@,#fff,sounds#[@sound_type+1@/@sounds.Count()@]
+>`@main.absoluteX+1@,@main.absoluteY+2@,#fff,> @sounds[sound_type]@
+?sound_type = 0
+  play_previous.sound = sounds[sounds.Count()-1]
+  play_next.sound = sounds[sound_type+1]
+
+  >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@sounds[sounds.Count()-1]@
+  >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@sounds[sound_type+1]@
+
+:?sound_type = sounds.Count() - 1
+  play_previous.sound = sounds[sound_type-1]
+  play_next.sound = sounds[0]
+
+  >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@sounds[sound_type-1]@
+  >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@sounds[0]@
+:
+  play_previous.sound = sounds[sound_type-1]
+  play_next.sound = sounds[sound_type+1]
+
+  >`@main.absoluteX+1@,@main.absoluteY+1@,#7f7f7f,@sounds[sound_type-1]@
+  >`@main.absoluteX+1@,@main.absoluteY+3@,#7f7f7f,@sounds[sound_type+1]@

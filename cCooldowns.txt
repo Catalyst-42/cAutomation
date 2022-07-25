@@ -1,0 +1,261 @@
+/* cCooldowns.txt - script for using items with cooldown and drawing it on screen
+ * -> Created by Catalyst
+ * -> v1.0
+ * -> import cCooldowns
+ *
+ * Use arrows to change mode
+ */
+
+var x = 1
+var y = 1
+
+draw.Box(1, 1, 9, 5, #000) // potion box
+
+var LoopCount = 0
+?loc.loop
+  LoopCount++
+
+var Style = 0
+var FineX = x
+var FineY = y
+x = FineX
+y = FineY
+
+?key = leftBegin
+  ?Style = 0
+    Style = 1
+  :
+    Style--
+  
+?key = rightBegin
+  ?Style = 1
+    Style = 0
+  :
+    Style++
+
+var BardicheCd = item.GetCooldown("bardiche")
+var BladeOfGodCd = item.GetCooldown("blade")
+var MindCd = item.GetCooldown("mind")
+var BashCd = item.GetCooldown("bash")
+var DashCd = item.GetCooldown("dash")
+var QrtsCd = item.GetCooldown("quarterstaff")
+var MaskCd = item.GetCooldown("mask")
+var ArmCd = item.GetCooldown("arm")
+
+var MindDef = 0
+
+BardicheCd = item.GetCooldown("bardiche")
+BladeOfGodCd = item.GetCooldown("blade")
+MindCd = item.GetCooldown("mind")
+BashCd = item.GetCooldown("bash")
+DashCd = item.GetCooldown("dash")
+QrtsCd = item.GetCooldown("quarterstaff")
+MaskCd = item.GetCooldown("mask")
+ArmCd = item.GetCooldown("skeleton_arm")
+
+/*
+?item.GetCooldown("skeleton_arm") = 0 & foe.distance < 6
+  equip skeleton_arm
+    activate R
+*/
+
+?DashCd = -1
+  DashCd = 0
+
+?BashCd = -1
+  BashCd = 0
+
+?(target = waypoint | foe.distance >= 35 | ai.enabled = false | ai.paused & ai.idle) & foe ! bomb_cart
+  ?loc = Mine
+    equipR shield au
+  :
+    ?armor < 14
+      equipR F8ST
+    :
+      equipR compound shield
+
+  ?hp = maxhp | loc = Rocky | (ai.paused & ai.idle & foe = mushroom_boss)
+    equipL triskelion
+    ?ai.enabled = false | (ai.paused & ai.idle) | pickup = Treasure | loc = Deadwood & armor < 25
+      equipL quest
+  :
+    equipL ouroboros
+
+?foe = dysangelos_bearer & foe.distance > 16 & (foe.state = 118 | foe.state = 2 | foe.state = 32)
+    equipL ice sword
+    equipR fire shield A
+
+?pickup.distance <= 10
+  equipR star
+
+?item.potion ! empty & (
+^(hp <= 20 & loc ! Temple & loc ! Halls) | 
+^(loc = Temple & hp <= maxhp / 2 & foe = boss) )
+  activate potion
+
+var maskLock = 0
+?loc.loop
+  maskLock = 0
+
+?(foe = dysangelos_bearer & foe.hp < foe.maxhp) | 
+^(foe = dysangelos_perfected & buffs.string = "lucky_crit:1:2,")
+  maskLock = 1 
+
+?foe = dysangelos_perfected &
+^foe.debuffs.string = "chill:6" & 
+^buffs.string = lucky_crit & 
+^buffs.string ! "lucky_crit:1:2,"
+  maskLock = 0
+
+?maskLock
+  equipR mask
+  activate potion
+
+?totaltime > 2520
+  maskLock = 0
+
+?(BashCd = 0 | DashCd = 0) & (foe.distance >= 10 & foe.distance <= 16) & ai.enabled
+  ?foe = boss & (
+  ^(foe = spider_boss & foe.hp <= 2500) |
+  ^(foe = cool_bat & draw.GetSymbol(32, 5) = "i") |
+  ^(foe = mushroom_boss & foe.state ! 32) |
+  ^(foe = nagaraja & (draw.GetSymbol(29, 11) = "(" | draw.GetSymbol(27, 11) = "(") & (foe.hp < 9400 | foe.hp > 13000)) | 
+  ^(foe = bronze_guardian & foe.state = 33) |
+  ^(foe = pallas) |
+  ^(foe = dysangelos & (foe.state = 33 | foe.state = 32 | foe.state = 2) & draw.GetSymbol(41, 10) ! "/") |
+  ^(foe = poena) |
+  ^(foe = tree_boss) |
+  ^(foe = acronian_scout) |
+  ^(foe = acronian_cultist & foe.hp < 600) |
+  ^(foe = yeti | foe = elite) )
+    ?(BashCd = 0) & foe ! poena
+      equipR bashing shield
+    :?(DashCd = 0)
+      equipR dashing shield
+  :?foe ! boss & foe ! scorpion & foe ! ghost & foe ! wasp
+    ?(BashCd = 0) 
+      equipR bashing shield
+    :?(DashCd = 0)
+      equipR dashing shield
+
+?(loc ! Pallas & loc ! Caves & loc ! Rocky) | (loc = Caves & foe ! boss)
+  ?(BladeOfGodCd = 0 & foe.count >= 5)
+    screen.Next()
+    ?screen.x-pos.x > screen.w + screen.w / 3
+      equip blade
+      activate R
+
+?BladeOfGodCd > 2370
+  screen.ResetOffset()
+
+?MindCd = 0 &
+^((foe = nagaraja & (foe.state = 112 | draw.GetSymbol(37, 10) = "(")) | 
+^(foe = bronze_guardian & foe.state = 32) |
+^(foe = mushroom_boss & foe.state = 32) |
+^(foe = bomb_cart & foe.distance <= 12) |
+^(foe = spider_boss & foe.state = 133) |
+^(foe = acronian_cultist & foe.state = 32) |
+^(foe = dysangelos & foe.state = 115) |
+^(foe = dysangelos_perfected & draw.GetSymbol(46, 8) = "\") )
+  MindDef++
+  ?((MindDef >= 0 & foe.state ! 112 | MindDef >= 60 & foe.state = 112) & foe = nagaraja) |
+  ^(MindDef >= 20 & foe = bronze_guardian & armor <= 40) |
+  ^(MindDef >= 84 & foe = mushroom_boss & foe ! mushroom_boss_skinny) |
+  ^(MindDef >= 0 & foe = bomb_cart & foe.distance <= 12) |
+  ^(MindDef >= 1 & foe = fluff) | 
+  ^(MindDef >= 30 & foe = acronian_cultist) |
+  ^(MindDef >= 30 & foe = dysangelos) |
+  ^(MindDef >= 10 & draw.GetSymbol(46, 8) = "\" & foe = dysangelos)
+    MindDef = 0
+    equipR mind stone
+    activate R
+:
+  MindDef = 0
+
+?(BardicheCd = 0 | BardicheCd >= 875) & (foe.hp >= 500 | foe.armor >= 500) & foe.distance <= 10 & (
+^(foe = spider_boss & foe.distance = 3) |
+^(foe = poena & foe.distance = 3) |
+^(foe = acronian_scout) |
+^(foe = acronian_cultist) |
+^(foe = epic_snail & foe = boss) |
+^(foe = mushroom_boss_skinny) |
+^(foe = bronze_guardian & foe.distance = 3) |
+^(foe = nagaraja & foe.distance = 3) |
+^(foe = yeti | foe = elite & foe.armor = 0) |
+^(foe = skeleton_boss & foe.debuffs.string = "chill:6") )
+  equip bardiche
+  activate R
+
+?item.potion = lucky & (
+^(foe = dysangelos_perfected & item.right = bardiche & BardicheCd <= 880) | 
+^(foe = mushroom_boss_skinny) |
+^(foe = poena & foe.distance = 3 & item.right = bardiche & BardicheCd <= 880) |
+^(foe = bronze_guardian & item.right = bardiche & BardicheCd <= 880 & foe.distance < 4) |
+^(foe = nagaraja & item.right = bardiche & BardicheCd <= 880) |
+^(foe = skeleton_boss & item.right = bardiche & BardicheCd <= 880 & foe.distance < 8) |
+^(foe = yeti & foe.hp ! foe.maxhp & foe.distance < 8) )
+  activate potion
+
+?QrtsCd = 0 & item.CanActivate() & ai.enabled & (
+^(foe.distance > 20 & foe ! boss & foe ! mosquito) | 
+^(foe = nagaraja & (draw.GetSymbol(23, 11) = "(" | draw.GetSymbol(24, 12) = "(")) | 
+^(foe = bronze_guardian & foe.distance > 20 & foe.state = 33) )
+  equip quarterstaff
+  activate R
+
+?totaltime < 60 & LoopCount = 0
+  equipR compound shield
+
+?MaskCd = 0 & item.GetCooldown("bardiche") < 875 & 
+^foe = dysangelos_perfected & foe.hp < 25400
+  equipR mask
+  activate R
+
+// Drawing cooldowns
+var sprites = ["┤==/", "─┬_)", "---·", "(>) ", "(<) ", "‾`-≡", "((} "]
+var recatSprites = ["=/", "_)", "-·", ">", "<", "≡", "}"]
+var values
+?ai.enabled = true
+  values = [BladeOfGodCd, BardicheCd, QrtsCd, BashCd, MindCd, ArmCd, MaskCd]
+  ?DashCd < BashCd
+    values[3] = DashCd
+    sprites[3] = "(:) "
+    recatSprites[3] = ":"
+  :
+    values[3] = BashCd
+    sprites[3] = "(>) "
+    recatSprites[3] = ">"
+
+  for i = 0..sprites.Count()-1
+    ?values[i] ! 0
+      >`@x-1@,@y+i@,#555,@recatSprites[i]@
+    :
+      >`@x@,@y+i@,@sprites[i]@
+
+    ?Style = 0 & values[i] ! 0
+      >`@x+1@,@y+i@,#555,@values[i]/30@s
+    :?Style = 1 & values[i] ! 0
+      >`@x+1@,@y+i@,#555,@values[i]@f
+
+
+// Debug
+// >`1,22,#ffa,MD:@MindDef@
+// >`1,22,#ffa,ST:@foe=stage_2@
+// >`1,23,#ffa,Mask:@MaskCd@
+// >`1,23,#ffa,BF:@buffs.string@
+// >`47,9,#ffa,♥❄*∞φ∞с
+// >`1,11,#rainFF,@draw.GetSymbol(23, 11)@
+
+/*
+>`40,7,#fff,ascii
+┤==/
+((}
+‾`-≡
+─┬_)
+---·
+
+(<)
+(>) (:)
+
+asciiend
+*/
