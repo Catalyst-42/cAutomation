@@ -11,7 +11,7 @@ To use, install the folder with the scripts in the scripts folder of the game, i
   import cCooldowns
 ```
 
-## Скрипты
+## Scripts
 `cAutomation` - automation script for all levels  
 `cCooldowns` - script for using items with cooldowns  
 
