@@ -1,0 +1,375 @@
+/* cColorTetris.txt
+ * -> Created by Catalyst
+ * -> v1.1 (Mobile update)
+ * -> import Games/cColorTetris
+ *
+ * You also can play widh W and H parameters to change field size,
+ * and figure_glyph_a/b to chane block sprite
+ * 
+ */
+
+var is_game_ended = false
+
+var score = 0
+var lines = 0
+var ticks = 0
+
+var W = 10     // field width
+var H = 20 + 1 // field height
+
+var figure_glyph_a = "[" // any ascii symbol
+var figure_glyph_b = "]" // [] () {} ██
+
+var game_x = screen.w/2 - (W*2 + 18)/2
+var game_y = screen.h/2 - H/2
+
+?sys.isMobile
+  game_x = screen.w/2 - W // center x only by bottle
+
+var gui_x = game_x + 2*W + 3
+var gui_y = game_y
+
+var figure_x = W/2 - 2
+var figure_y = 0
+
+var figure_max_x = 22
+var figure_min_x = -2
+
+var figure = 15
+var figure_next = 1
+
+var figure_color = 7
+var figure_next_color = 2
+
+var clear_line = ""
+var full_line = ""
+var lower_border = " "
+
+var figures = []
+var field = []
+
+var field_colors = []
+var colors = [#white, #yellow, #cyan, #green, #red, #f80, #blue, #f0f]
+
+var button_left = 0
+var button_right = 1
+var button_rotate = 2
+var button_down = 3
+var button_restart = 4
+var button_exit = 5
+
+// enum
+var x = 0
+var y = 1
+var w = 2
+var h = 3
+var is_pressed = 4
+var key_name = 5
+var icon = 6
+
+var buttons = [
+  // x, y, w, h, is_pressed, key, icon
+  [0, screen.h/2, 11, 5, false, primaryBegin, "<"],                 // left
+  [11, screen.h/2, 11, 5, false, primaryBegin, ">"],                // right
+  [screen.w-22, screen.h/2, 11, 5, false, primaryBegin, "O"],       // rotate
+  [screen.w-11, screen.h/2, 11, 5, false, primary, "v"],            // down
+  [screen.w-21, screen.h - 3, 11, 3, false, primaryEnd, "restart"], // restart
+  [screen.w-10, screen.h - 3, 10, 3, false, primaryEnd, "exit"],    // exit
+]
+
+?sys.isMobile
+  // get input from buttons
+  for i = 0..5
+    ?key = buttons[i][key_name] &
+    ^input.x >= buttons[i][x] & input.x < buttons[i][x] + buttons[i][w] &
+    ^input.y >= buttons[i][y] & input.y < buttons[i][y] + buttons[i][h]
+      buttons[i][is_pressed] = true
+    :
+      buttons[i][is_pressed] = false
+
+func coutField()
+  // field
+  for y = 0..H-1
+    >`@game_x@,@game_y+y@,#white,|
+    >`@game_x+W*2+1@,@game_y+y@,#white,|
+
+    ?field[y] ! clear_line
+      for x = 0..W-1
+        ?string.Sub(field[y], x, 1) = figure_glyph_a
+          >`@game_x+x*2+1@,@game_y+y@,@colors[field_colors[y*W+x]]@,@figure_glyph_a@@figure_glyph_b@
+          
+  >`@game_x@,@game_y+H@,#white,@lower_border@
+
+  // next figure
+  >`@gui_x@,@gui_y + 1@,#white,Lines: @lines@
+  >`@gui_x@,@gui_y + 2@,#white,Score: @score@
+  >`@gui_x@,@gui_y + 3@,#white,Next figure:
+
+  var render_line = ""
+  for y = 0..3
+    render_line = ""
+    for x = 0..3
+      ?string.Sub(figures[figure_next], y*4+x, 1) = "@"
+        render_line += figure_glyph_a + figure_glyph_b
+      :
+        render_line += "  "
+      
+    >`@gui_x@,@gui_y + 4 + y@,@colors[figure_next_color]@,@render_line@
+  
+  ?sys.isPC | sys.isConsole
+    ?is_game_ended
+      >`@gui_x@,@gui_y + H - 5@,#yellow,game is ended
+      >`@gui_x@,@gui_y + H - 4@,#666,[Z] - restart game
+
+    // controls
+    >`@gui_x@,@gui_y + H - 3@,#666,[A], [D] - move
+    >`@gui_x@,@gui_y + H - 2@,#666,[C] - rotate
+    >`@gui_x@,@gui_y + H - 1@,#666,[X] - exit
+  
+  // draw buttons for phones
+  ?sys.isMobile
+    var pivot_x = 0
+    var pivot_y = 0
+
+    for i = 0..5
+      ?!is_game_ended & i = button_restart
+        continue
+  
+      draw.Box(buttons[i][x], buttons[i][y], buttons[i][w], buttons[i][h], #white)
+
+      pivot_x = buttons[i][x] + (buttons[i][w] - string.Size(buttons[i][icon])) / 2
+      pivot_y = buttons[i][y] + buttons[i][h] / 2
+
+      >`@pivot_x@,@pivot_y@,#white,@buttons[i][icon]@
+
+  /* debug /
+  >`@gui_x@,@gui_y + 10@,#yellow,x, y: @figure_x@, @figure_y@ GX, GY: @game_x@, @game_y@
+  >`@gui_x@,@gui_y + 11@,#yellow,figure: @figure@, next: @figure_next@
+  >`@gui_x@,@gui_y + 12@,#yellow,totaltime: @totaltime@, 
+  >`@gui_x@,@gui_y + 13@,#yellow,ticks: @ticks@, upd: @(30 - score/100)@
+  
+  ?totaltime % 2 = 0
+    >`@gui_x@,@gui_y + 14@,#yellow,█
+  // */
+
+func setFigure()
+  for y = 0..3
+    for x = 0..3
+      ?string.Sub(figures[figure], x+y*4, 1) = "@"
+        >`@game_x+figure_x*2+x*2+1@,@game_y+figure_y+y@,@colors[figure_color]@,@figure_glyph_a@@figure_glyph_b@
+
+func setMaxXY()
+  // max
+  ?[0, 2, 10, 14, 18].Contains(figure)
+    figure_max_x = W-3
+  : 
+    figure_max_x = W-4
+
+  // min
+  ?[2, 4, 6, 8, 12, 16].Contains(figure)
+    figure_min_x = -2
+  :?figure = 1
+    figure_min_x = 0
+  :
+    figure_min_x = -1
+
+  // x normalization, especially when rotating
+  ?figure_x < figure_min_x
+    figure_x = figure_min_x
+  
+  ?figure_x > figure_max_x
+    figure_x = figure_max_x
+
+func rotate()
+  var figure_heap = figure
+  var figure_x_heap = figure_x
+  var figure_y_heap = figure_y
+  
+  //               O  I     S     Z     L            J               T
+  var rotations = [0, 2, 1, 4, 3, 6, 5, 10, 7, 8, 9, 14, 11, 12, 13, 18, 15, 16, 17]
+  figure = rotations[figure]
+
+  // if rotate is not possible
+  setMaxXY()
+  for y = 0..3
+    for x = 0..3
+      ?string.Sub(figures[figure], x+y*4, 1) = "@" & (figure_y+y>H-1 | string.Sub(field[figure_y+y], figure_x+x, 1) = figure_glyph_a)
+        figure = figure_heap
+        figure_x = figure_x_heap
+        figure_y = figure_y_heap
+        setMaxXY()
+        return
+
+func move(move_direction)
+  ?figure_x + move_direction < figure_min_x | figure_x + move_direction > figure_max_x
+    return
+
+  for y = 3..0
+    for x = 0..3
+      ?string.Sub(figures[figure], x+y*4, 1) = "@" & (string.Sub(field[figure_y+y], figure_x+x+move_direction, 1) = figure_glyph_a)
+        return
+      
+  figure_x += move_direction
+
+func checkCollision()
+  var figures_id = [0, 1, 3, 5, 7, 11, 15]
+  var clip = false
+
+  for y = 3..0
+    for x = 0..3
+      ?string.Sub(figures[figure], x+y*4, 1) = "@" & (figure_y+y = H-1 | string.Sub(field[figure_y+y+1], figure_x+x, 1) = figure_glyph_a)
+        clip = true
+        play pickup_bronze
+      
+        break
+  
+  ?!clip
+    return
+  
+  for y = 3..0
+    for x = 0..3
+      // place figure
+      ?string.Sub(figures[figure], x+y*4, 1) = "@"
+        field[figure_y+y] = string.Sub(field[figure_y+y], 0, figure_x+x) + figure_glyph_a + string.Sub(field[figure_y+y], figure_x+x+1)
+        field_colors[figure_y*W + y*W + figure_x + x] = figure_color
+  
+  for y = 3..0
+    for x = 0..3
+      // if new figure can't be spawned
+      ?string.Sub(figures[figure_next], x+y*4, 1) = "@" & string.Sub(field[y], W/2 - 2+x, 1) = figure_glyph_a
+        is_game_ended = true
+        play uulaa_voice
+        
+        break
+  
+  figure_x = W/2 - 2
+  figure_y = -1
+
+  figure = figure_next
+  figure_color = figure_next_color
+
+  figure_next = rng % 7
+  figure_next_color = figure_next
+
+  figure_next_color = figure_next_color + 1
+  figure_next = figures_id[figure_next]
+
+func checkLines()
+  for y = H-1..0
+    ?field[y] = full_line
+      play quest_stone_jump
+
+      score += 10
+      lines++
+      field[y] = clear_line
+      
+      for yy = y-1..0
+        for x = 0..W-1
+          field_colors[(yy+1)*W + x] = field_colors[yy*W + x]
+        
+        field[yy+1] = field[yy]
+      
+      return
+
+func init()
+  // generate figures
+  figures.Add(".....@@..@@.....") // O
+
+  figures.Add("....@@@@........") // I
+  figures.Add("..@...@...@...@.")
+
+  figures.Add("......@@.@@.....") // S
+  figures.Add("..@...@@...@....")
+
+  figures.Add(".....@@...@@....") // Z
+  figures.Add("...@..@@..@.....")
+
+  figures.Add(".....@@@.@......") // L
+  figures.Add("..@...@...@@....") 
+  figures.Add("...@.@@@........") 
+  figures.Add(".@@...@...@.....") 
+
+  figures.Add(".....@@@...@....") // J
+  figures.Add("..@@..@...@.....") 
+  figures.Add(".@...@@@........") 
+  figures.Add("..@...@..@@.....")
+
+  figures.Add(".....@@@..@.....") // T
+  figures.Add("..@...@@..@.....") 
+  figures.Add("..@..@@@........") 
+  figures.Add("..@..@@...@.....")
+
+  // generate lines
+  for x = 0..W-1
+    clear_line += " "
+    full_line += figure_glyph_a
+    lower_border += "--"
+  
+  // generate field
+  for y = 0..H-1
+    field.Add(clear_line)
+
+  // generate colors
+  for xy = 0..W*H - 1
+    field_colors.Add(0)
+
+func gameLoop()
+  ?key = backBegin | buttons[button_exit][is_pressed] // X
+    loc.Leave()
+
+  ?!is_game_ended
+    ?totaltime % (30 - score/100) = 0 | key = down | buttons[button_down][is_pressed] // S
+      setMaxXY()
+      checkCollision()
+      checkLines()
+      figure_y++
+      ticks++
+
+      ?ticks % 10 = 0
+        score += 1
+
+    ?key = bumpRBegin | buttons[button_rotate][is_pressed] // C
+      rotate()
+      play grappling_idle
+
+    ?key = leftBegin | buttons[button_left][is_pressed] // A
+      move(-1)
+    
+    ?key = rightBegin | buttons[button_right][is_pressed] // D
+      move(1)
+
+  :?key = bumpLEnd | buttons[button_restart][is_pressed] // Z
+    is_game_ended = false
+    
+    score = 0
+    ticks = 0
+    lines = 0
+    
+    field.Clear()
+    field_colors.Clear()
+
+    for y = 0..H-1
+      field.Add(clear_line)
+
+    for xy = 0..W*H - 1
+      field_colors.Add(0)
+
+  // update board
+  draw.Clear()
+  coutField()
+  
+  ?!is_game_ended
+    setFigure()
+
+?loc.begin
+  disable abilities
+  disable pause
+  disable hud
+  disable banner
+  disable loadout input
+  disable player
+
+  ambient.Stop()
+  init()
+:
+  gameLoop()

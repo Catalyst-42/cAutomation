@@ -1,15 +1,21 @@
 /* cCooldowns.txt - script for using items with cooldown and drawing it on screen
  * -> Created by Catalyst
- * -> v1.0
+ * -> v1.6
  * -> import cCooldowns
  *
- * Use arrows to change mode
+ * Uses GetSymbol detection on Mines and Plateau
+ * screen should be 72 on 25 symbol on this locations
+ *
+ * Use arrows to change mode (seconds & frames)
+ *
+ * Script uses:
+ * F8ST - compound shield +def./sec.
  */
+
+disable hud ar
 
 var x = 1
 var y = 1
-
-draw.Box(1, 1, 9, 5, #000) // potion box
 
 var LoopCount = 0
 ?loc.loop
@@ -34,6 +40,7 @@ y = FineY
     Style++
 
 var BardicheCd = item.GetCooldown("bardiche")
+var HammerCd = item.GetCooldown("hammer")
 var BladeOfGodCd = item.GetCooldown("blade")
 var MindCd = item.GetCooldown("mind")
 var BashCd = item.GetCooldown("bash")
@@ -42,9 +49,8 @@ var QrtsCd = item.GetCooldown("quarterstaff")
 var MaskCd = item.GetCooldown("mask")
 var ArmCd = item.GetCooldown("arm")
 
-var MindDef = 0
-
 BardicheCd = item.GetCooldown("bardiche")
+HammerCd = item.GetCooldown("hammer")
 BladeOfGodCd = item.GetCooldown("blade")
 MindCd = item.GetCooldown("mind")
 BashCd = item.GetCooldown("bash")
@@ -53,11 +59,11 @@ QrtsCd = item.GetCooldown("quarterstaff")
 MaskCd = item.GetCooldown("mask")
 ArmCd = item.GetCooldown("skeleton_arm")
 
-/*
-?item.GetCooldown("skeleton_arm") = 0 & foe.distance < 6
+/* /
+?item.GetCooldown("skeleton_arm") = 0 & foe.distance <= 7 & foe ! boss
   equip skeleton_arm
     activate R
-*/
+// */
 
 ?DashCd = -1
   DashCd = 0
@@ -65,7 +71,8 @@ ArmCd = item.GetCooldown("skeleton_arm")
 ?BashCd = -1
   BashCd = 0
 
-?(target = waypoint | foe.distance >= 35 | ai.enabled = false | ai.paused & ai.idle) & foe ! bomb_cart
+?(target = waypoint | foe.distance >= 35 | !ai.enabled | (ai.paused & ai.idle) | 
+^(foe.distance >= 16 & loc = Temple & foe ! nagaraja)) & foe ! bomb_cart
   ?loc = Mine
     equipR shield au
   :
@@ -74,10 +81,11 @@ ArmCd = item.GetCooldown("skeleton_arm")
     :
       equipR compound shield
 
-  ?hp = maxhp | loc = Rocky | (ai.paused & ai.idle & foe = mushroom_boss)
-    equipL triskelion
-    ?ai.enabled = false | (ai.paused & ai.idle) | pickup = Treasure | loc = Deadwood & armor < 25
+  ?hp = maxhp | loc = Rocky | (loc = Halls & ! ai.paused) | (ai.paused & ai.idle & foe = mushroom_boss)
+    ?foe = dysangelos & foe.distance = 18 | totaltime > 2600
       equipL quest
+    :
+      equipL triskelion
   :
     equipL ouroboros
 
@@ -97,29 +105,65 @@ var maskLock = 0
 ?loc.loop
   maskLock = 0
 
-?(foe = dysangelos_bearer & foe.hp < foe.maxhp) | 
-^(foe = dysangelos_perfected & buffs.string = "lucky_crit:1:2,")
+var buffLuckyCrit = 0
+var buffLuckyMult = 0
+
+var EffectsValues = [0, 0]
+var EffectsTimes = [0, 0]
+var EffectsMaxTimes = [0, 0]
+var EffectsNames = ["lucky_crit:", "lucky_mult:"]
+var EffectsIcons = ["!", "x"]
+var effectsList
+var eString
+
+eString = buffs.string
+effectsList = string.Split(buffs.string, ",")
+
+for BuffName = 0..EffectsNames.Count()-1
+  ?eString = EffectsNames[BuffName]
+    for i = 0..effectsList.Count()-1
+      ?string.Split(effectsList[i], ":")[1] + ":" = EffectsNames[BuffName]
+        ?EffectsValues[BuffName] ! int.Parse(string.Split(effectsList[i], ":")[2])
+          EffectsMaxTimes[BuffName] = int.Parse(string.Split(effectsList[i], ":")[3]) + 1.0
+        EffectsValues[BuffName] = int.Parse(string.Split(effectsList[i], ":")[2])
+        EffectsTimes[BuffName] = int.Parse(string.Split(effectsList[i], ":")[3])
+  :
+    EffectsValues[BuffName] = 0
+    EffectsTimes[BuffName] = 0
+    EffectsMaxTimes[BuffName] = 0
+
+// for i = EffectsNames.Count()-1..0
+//   >`8,@i+1@,@EffectsIcons[i]@:@EffectsValues[i]@:@EffectsTimes[i]@:@EffectsMaxTimes[i]@
+// >`23,1,>@string.Join("\n", string.Split(buffs.string, ","))@
+
+?(foe = dysangelos_perfected & EffectsTimes[buffLuckyCrit] = 2) | 
+^(foe = dysangelos_bearer & foe.distance < 18)
   maskLock = 1 
 
 ?foe = dysangelos_perfected &
-^foe.debuffs.string = "chill:6" & 
-^buffs.string = lucky_crit & 
-^buffs.string ! "lucky_crit:1:2,"
+^foe.debuffs.string = "chill:6" &  
+^EffectsTimes[buffLuckyCrit] > 3
   maskLock = 0
 
 ?maskLock
   equipR mask
-  activate potion
+  ?foe.hp ! foe.maxhp
+    activate potion
 
 ?totaltime > 2520
   maskLock = 0
 
+?loc = Rocky
+  ?totaltime >= 1154 & totaltime <= 1156 |
+  ^totaltime >= 2094 & totaltime <= 2096
+    equipR fire shield af
+
 ?(BashCd = 0 | DashCd = 0) & (foe.distance >= 10 & foe.distance <= 16) & ai.enabled
   ?foe = boss & (
-  ^(foe = spider_boss & foe.hp <= 2500) |
-  ^(foe = cool_bat & draw.GetSymbol(32, 5) = "i") |
+  ^(foe = spider_boss & foe.hp <= 1600) |
+  ^(foe = cool_bat & draw.GetSymbol(33, 5) = "i") |
+  ^(foe = wasp_nest) |
   ^(foe = mushroom_boss & foe.state ! 32) |
-  ^(foe = nagaraja & (draw.GetSymbol(29, 11) = "(" | draw.GetSymbol(27, 11) = "(") & (foe.hp < 9400 | foe.hp > 13000)) | 
   ^(foe = bronze_guardian & foe.state = 33) |
   ^(foe = pallas) |
   ^(foe = dysangelos & (foe.state = 33 | foe.state = 32 | foe.state = 2) & draw.GetSymbol(41, 10) ! "/") |
@@ -127,63 +171,66 @@ var maskLock = 0
   ^(foe = tree_boss) |
   ^(foe = acronian_scout) |
   ^(foe = acronian_cultist & foe.hp < 600) |
-  ^(foe = yeti | foe = elite) )
+  ^(foe = yeti | foe = elite & foe.hp = foe.maxhp) )
     ?(BashCd = 0) & foe ! poena
       equipR bashing shield
     :?(DashCd = 0)
       equipR dashing shield
-  :?foe ! boss & foe ! scorpion & foe ! ghost & foe ! wasp
+  :?foe ! boss & foe ! scorpion
     ?(BashCd = 0) 
       equipR bashing shield
     :?(DashCd = 0)
       equipR dashing shield
 
-?(loc ! Pallas & loc ! Caves & loc ! Rocky) | (loc = Caves & foe ! boss)
-  ?(BladeOfGodCd = 0 & foe.count >= 5)
+?(loc ! Pallas & loc ! Rocky)
+  ?(BladeOfGodCd = 0 & (foe.count >= 5 | loc = Caves & foe.count >= 1))
     screen.Next()
-    ?screen.x-pos.x > screen.w + screen.w / 3
+    ?screen.x-pos.x >= screen.w + screen.w / 3 - 10
       equip blade
       activate R
+  :
+    screen.ResetOffset()
 
-?BladeOfGodCd > 2370
-  screen.ResetOffset()
-
+var MindDef = 0
 ?MindCd = 0 &
-^((foe = nagaraja & (foe.state = 112 | draw.GetSymbol(37, 10) = "(")) | 
-^(foe = bronze_guardian & foe.state = 32) |
+^((foe = bronze_guardian & foe.state = 32) |
 ^(foe = mushroom_boss & foe.state = 32) |
 ^(foe = bomb_cart & foe.distance <= 12) |
-^(foe = spider_boss & foe.state = 133) |
-^(foe = acronian_cultist & foe.state = 32) |
+^(foe = spider_boss & foe.state = 133 & foe.hp > 600) |
 ^(foe = dysangelos & foe.state = 115) |
 ^(foe = dysangelos_perfected & draw.GetSymbol(46, 8) = "\") )
   MindDef++
-  ?((MindDef >= 0 & foe.state ! 112 | MindDef >= 60 & foe.state = 112) & foe = nagaraja) |
-  ^(MindDef >= 20 & foe = bronze_guardian & armor <= 40) |
+  ?((MindDef >= 30 & foe = bronze_guardian & armor <= 40) |
   ^(MindDef >= 84 & foe = mushroom_boss & foe ! mushroom_boss_skinny) |
   ^(MindDef >= 0 & foe = bomb_cart & foe.distance <= 12) |
   ^(MindDef >= 1 & foe = fluff) | 
-  ^(MindDef >= 30 & foe = acronian_cultist) |
+  ^(MindDef >= 1 & foe = spider_boss) | 
   ^(MindDef >= 30 & foe = dysangelos) |
-  ^(MindDef >= 10 & draw.GetSymbol(46, 8) = "\" & foe = dysangelos)
+  ^(MindDef >= 10 & draw.GetSymbol(46, 8) = "\" & foe = dysangelos) )
     MindDef = 0
     equipR mind stone
     activate R
 :
   MindDef = 0
 
+?item.CanActivate() & ai.enabled & foe.armor > 0 & (HammerCd = 0 | HammerCd > 646) &
+^(foe = bronze_guardian & foe.distance = 20 |
+^foe = mushroom_boss & foe.distance = 3)
+  equip heavy hammer
+  activate R
+
 ?(BardicheCd = 0 | BardicheCd >= 875) & (foe.hp >= 500 | foe.armor >= 500) & foe.distance <= 10 & (
 ^(foe = spider_boss & foe.distance = 3) |
-^(foe = poena & foe.distance = 3) |
+^(foe = tree_boss & foe.distance = 3) |
 ^(foe = acronian_scout) |
 ^(foe = acronian_cultist) |
 ^(foe = epic_snail & foe = boss) |
 ^(foe = mushroom_boss_skinny) |
-^(foe = bronze_guardian & foe.distance = 3) |
+^(foe = bronze_guardian & foe.distance = 3 & foe.debuffs.string = fatigue) |
 ^(foe = nagaraja & foe.distance = 3) |
 ^(foe = yeti | foe = elite & foe.armor = 0) |
 ^(foe = skeleton_boss & foe.debuffs.string = "chill:6") )
-  equip bardiche
+  equip shiny bardiche
   activate R
 
 ?item.potion = lucky & (
@@ -196,35 +243,42 @@ var maskLock = 0
 ^(foe = yeti & foe.hp ! foe.maxhp & foe.distance < 8) )
   activate potion
 
-?QrtsCd = 0 & item.CanActivate() & ai.enabled & (
+?QrtsCd = 0 & item.CanActivate() & ai.enabled & harvest.distance > 7 & (
 ^(foe.distance > 20 & foe ! boss & foe ! mosquito) | 
-^(foe = nagaraja & (draw.GetSymbol(23, 11) = "(" | draw.GetSymbol(24, 12) = "(")) | 
 ^(foe = bronze_guardian & foe.distance > 20 & foe.state = 33) )
   equip quarterstaff
   activate R
 
-?totaltime < 60 & LoopCount = 0
+?totaltime < 30 & LoopCount = 0
   equipR compound shield
 
-?MaskCd = 0 & item.GetCooldown("bardiche") < 875 & 
-^foe = dysangelos_perfected & foe.hp < 25400
+?MaskCd = 0 & item.GetCooldown("bardiche") < 875 & (
+^(foe = dysangelos_perfected & foe.hp < 25400) |
+^(foe = spider_boss & foe.hp < foe.maxhp - 500) |
+^(foe = tree_boss & foe.distance = 3 & foe.hp < foe.maxhp) )
   equipR mask
   activate R
 
-// Drawing cooldowns
-var sprites = ["┤==/", "─┬_)", "---·", "(>) ", "(<) ", "‾`-≡", "((} "]
-var recatSprites = ["=/", "_)", "-·", ">", "<", "≡", "}"]
+// ?summon.GetId() ! "cinderwisp"
+//   equipR fire talisman
+//   activate R
+
+// Draw cooldowns
+var sprites = ["┤==/", "─┬_)", "--[]", "---·", "(>)", "(<)", "‾`-≡", "((}"]
+var recatSprites = ["=/", "_)", "[]", "-·", ">", "<", "≡", "}"]
+var bashSpriteIndex = 4
 var values
+
 ?ai.enabled = true
-  values = [BladeOfGodCd, BardicheCd, QrtsCd, BashCd, MindCd, ArmCd, MaskCd]
+  values = [BladeOfGodCd, BardicheCd, HammerCd, QrtsCd, BashCd, MindCd, ArmCd, MaskCd]
   ?DashCd < BashCd
-    values[3] = DashCd
-    sprites[3] = "(:) "
-    recatSprites[3] = ":"
+    values[bashSpriteIndex] = DashCd
+    sprites[bashSpriteIndex] = "(:) "
+    recatSprites[bashSpriteIndex] = ":"
   :
-    values[3] = BashCd
-    sprites[3] = "(>) "
-    recatSprites[3] = ">"
+    values[bashSpriteIndex] = BashCd
+    sprites[bashSpriteIndex] = "(>) "
+    recatSprites[bashSpriteIndex] = ">"
 
   for i = 0..sprites.Count()-1
     ?values[i] ! 0
@@ -237,25 +291,11 @@ var values
     :?Style = 1 & values[i] ! 0
       >`@x+1@,@y+i@,#555,@values[i]@f
 
-
 // Debug
 // >`1,22,#ffa,MD:@MindDef@
 // >`1,22,#ffa,ST:@foe=stage_2@
 // >`1,23,#ffa,Mask:@MaskCd@
 // >`1,23,#ffa,BF:@buffs.string@
+// >`1,23,#ffa,i:@summon.GetVar("ignition")@
 // >`47,9,#ffa,♥❄*∞φ∞с
 // >`1,11,#rainFF,@draw.GetSymbol(23, 11)@
-
-/*
->`40,7,#fff,ascii
-┤==/
-((}
-‾`-≡
-─┬_)
----·
-
-(<)
-(>) (:)
-
-asciiend
-*/

@@ -1,0 +1,10 @@
+var scout = false
+var timestamp = 0
+
+?foe = acronian_scout
+  scout = true
+:?scout
+  scout = false
+  timestamp = totaltime
+
+>`1,23,#red,@timestamp@

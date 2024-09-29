@@ -1,0 +1,15 @@
+var dt = 0
+var dtMax = 0
+var timestamp = time.msbn
+
+func start()
+  timestamp = time.msbn
+
+func stop()
+  dt = (time.msbn).Sub(timestamp)
+  
+  ?dt.Gt(dtMax)
+    dtMax = dt
+
+func display(x, y, col)
+  >`@x@,@y@,@col@,dtMax=@dtMax@ dt=@dt@

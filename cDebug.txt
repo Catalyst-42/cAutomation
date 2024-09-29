@@ -1,6 +1,6 @@
 /* cDebug.txt - debug module. Displays mouse x,y and player state
  * -> Created by Catalyst
- * -> v1.0
+ * -> v1.1
  * -> import cDebug
  */
 
@@ -33,26 +33,33 @@ var is = false
 ?key = primaryBegin & x = 12 & y = 0
   screen.Next()
 
+/* Grid */ 
+var dotMode = 0
+?dotMode
+  for y = 1..screen.h / 5
+    for x = 1..screen.w / 10 - 1
+      >`@x*10@,@y*5@,#red,+@x*10@\n@y*5@
+
 /* AI statements */
 ?ai.paused
-  >`14,0,#0f0,[paused]
+  >`14,0,#0f0,[paused] 
 :
-  >`14,0,#999,[paused]
+  >`14,0,#999,[paused] 
 
 ?ai.idle
-  >`23,0,#0f0,[idle]
+  >`23,0,#0f0,[idle] 
 :
-  >`23,0,#999,[idle]
+  >`23,0,#999,[idle] 
 
 ?ai.walking
-  >`30,0,#0f0,[walking]
+  >`30,0,#0f0,[walking] 
 :
-  >`30,0,#999,[walking]
+  >`30,0,#999,[walking] 
 
 ?ai.enabled
-  >`40,0,#f0f,[enabled]
+  >`40,0,#f0f,[enabled] 
 :
-  >`40,0,#999,[enabled]
+  >`40,0,#999,[enabled] 
 
 /*
 var GetCounters = item.GetCount("wand *0 +0") +

@@ -3,11 +3,11 @@
  * -> v1.0
  * -> import cTimes
  *
- * Use arrows to change mode
+ * Use arrows to change mode (seconds & frames)
  */
 
 var x = 1
-var y = 9
+var y = 10
 
 var fineX = x
 var fineY = y

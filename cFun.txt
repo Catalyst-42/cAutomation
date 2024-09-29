@@ -1,0 +1,75 @@
+// Скрипт с дополнительными скнинами
+var Style = 2
+//>`0,10,#rainFF,██████████████████████████████████████████████████████████████████████████████████████
+
+?key = backBegin
+  ?Style = 0
+    Style = 4
+  :
+    Style--
+?key = bumpRBegin
+  ?Style = 4
+    Style = 0
+  :
+    Style++
+
+// Default - 0
+?Style = 0
+  enable player
+
+// Snake - 1
+?Style = 1
+  disable player
+  >`1,24,#green,,_.
+  var Color
+  var total_time = 12
+
+  Color = #green  
+  total_time = 12
+
+  ?ai.walking
+    ?time % total_time < 3
+      >o-3,3,@Color@,,-._.-
+    :?time % total_time < 6
+      >o-3,3,@Color@,-._.-.
+    :?time % total_time < 9
+      >o-3,3,@Color@,._.-._
+    :?time % total_time < 12
+      >o-3,3,@Color@,_.-._
+  :
+    >o-3,3,@Color@,_.-._.
+
+// Devil - 2
+?Style = 2
+  enable player
+  ?draw.GetSymbol(1, 25) = "O"
+    >`1,24,#fff,└#┘
+  >h-1,1,#fff,└#┘
+
+// Stick - 3
+?Style = 3
+  disable player
+  >`1,24,#fff,·┬·
+  >h-1,+1,#fff,ascii
+·┬·
+#|
+asciiend
+
+// Skeleton - 4
+?Style = 4
+  enable player
+  >`1,24,#fff,o,o
+  >h-2,-2,#fff,ascii
+#####
+#,--.
+( o,o)
+#‾'"'
+##╫
+asciiend
+
+//Debug
+//>`0,1,#white,Idle:@ai.idle@ Walking:@ai.walking@
+//>`0,1,#fff,@Style@
+
+// draw.Clear()
+

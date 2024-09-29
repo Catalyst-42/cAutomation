@@ -1,4 +1,5 @@
 ?loc.begin
+  ambient.Stop()
   music.Stop()
   var music_list = [
     bronze_guardian_3,
@@ -108,6 +109,12 @@
   main.Add(play_next)
   main.Add(hide_plyer)
 
+  play_button.sound = epliogue_player_evolves
+  stop_button.sound = epliogue_player_evolves
+  play_previous.sound = epliogue_player_evolves
+  play_next.sound = epliogue_player_evolves
+  hide_plyer.sound = epliogue_player_evolves
+  
   play_button.visible = inherit
   stop_button.visible = inherit
   play_previous.visible = inherit

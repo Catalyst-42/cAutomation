@@ -1,12 +1,12 @@
 /* cAutomation.txt - a main automation script
  * -> Created by Catalyst
- * -> v1.0
+ * -> v1.6
  * -> import cAutomation
  * 
  * Uses GetSymbol detection on Mines and Plateau 
- * screen should be 71 on 21 symbols on this locations
+ * screen should be 72 on 25 symbols on this locations
  * 
- * Loadouts:
+ * Loadouts & Weapons:
  * 1: L vigor wand dL +dps,   R vigor wand dL +dps
  * 2: L ice wand dI +dps,     R ice wand D +dps
  * 3: L ice sword dI +dps,    R ice sword dI +dps
@@ -14,6 +14,9 @@
  * 5: L poison sword dP +dps, R poison sword D +dps
  * 6: L vigor sword dL +dps,  R vigor sword D +dps
  * 7: L aether sword dU +dps, R aether sword D +dps
+ *
+ * Script uses:
+ * F8ST - compound shield +def./sec.
  */
 
 disable loadout print
@@ -63,6 +66,7 @@ for i = foeEffectsNames.Count()-1..0
 // Зелья
 ?loc.begin
   brew stone + bronze
+  // brew wood + bronze
 
 // Плато
 ?loc = Rocky
@@ -75,7 +79,7 @@ for i = foeEffectsNames.Count()-1..0
 ?loc = Rocky & (ai.idle | [89, 90].Contains(timer)) & item.GetCooldown("bardiche") < 875
   loadout 4
 
-  ?foeEffectsValues[debuffDot] < 1 & foe ! dysangelos_elementalist
+  ?foeEffectsValues[debuffDot] = 0 & foe ! dysangelos_elementalist
     equipL fire sword dF -long
 
   ?hp < maxhp & foe.debuffs.count >= 5 & buffs.string ! lucky_crit
@@ -88,16 +92,16 @@ for i = foeEffectsNames.Count()-1..0
   ?(foeEffectsValues[debuffDamage] < 1 | foeEffectsTimes[debuffDamage] <= 14) & foe.state = 32 & foe = dysangelos_bearer
     equipL sword dP
 
+  // ?totaltime > 30 & summon.count = 0
+  //   equipL fire talisman
+  //   activate L
+
   ?foe = acronian_scout
     equip arm
 
     ?foe.distance >= 16
       equipL triskelion
       equipR compound shield
-
-    // ?foeEffectsValues[debuffDot] < 1
-    //   equipL sword dp
-    //   equipL fire sword dF -long
     
   ?foe = dysangelos_elementalist  
     ?foe = poison
@@ -116,12 +120,14 @@ for i = foeEffectsNames.Count()-1..0
       equipL fire sword D
 
   ?foe = dysangelos_perfected
-    ?foeEffectsValues[debuffDot] < 1
+    ?summon.count ! 0 & summon.GetVar("ignition") > 2
+      activate cinderwisp
+    
+    ?foeEffectsValues[debuffDot] = 0
       equipL fire sword dF -long
 
     ?foeEffectsValues[debuffChill] = 6 & foeEffectsValues[debuffDot] > 0 &
-    ^buffs.string = lucky_crit & 
-    ^buffs.string ! "lucky_crit:1:2,"
+    ^buffs.string = lucky_crit
       loadout 4
 
     ?foeEffectsValues[debuffDot2] = 0 & timer >= 89
@@ -136,12 +142,14 @@ for i = foeEffectsNames.Count()-1..0
     ?foe.hp < 4400 & hp ! maxhp
       loadout 6
 
+    draw.Bg(46, 8, #555)
     ?draw.GetSymbol(46, 8) = "/"
       loadout 3
 
 // Лес
 :?loc = Deadwood & (ai.idle | item.left = stone | item.right = quarterstaff | item.right = blade) & item.GetCooldown("bardiche") < 875
-  loadout 4
+  equipL fire sword D -long
+  equipR fire sword dF -long
 
   ?foe = mosquito & hp ! maxhp
     loadout 1
@@ -150,28 +158,21 @@ for i = foeEffectsNames.Count()-1..0
     loadout 2
 
   ?foe = Xyloalgia
-    ?foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7 | foe.hp < 100
-      ?foe.distance >= 6
-        equipL triskelion
-      :
-        equipL ice wand dI
-      equipR ice sword dI
-    :?foeEffectsValues[debuffDamage] < 1
-      equipR poison sword
+    ?foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7
+      loadout 3
     :
-      ?foeEffectsValues[debuffDot] < 1
-        loadout 4
-      :
-        loadout 3
+      loadout 4
 
-    ?foe.distance > 22
-      equipL quest
-      equipR compound shield
+    ?foeEffectsValues[debuffDot] = 0
+      equipR fire sword dF -long
+
+    ?foe.distance >= 20
+      equipL triskelion
   
   ?foe = poena
     equip bardiche
-    ?foe.hp <= 150
-      loadout 4
+    ?foe.hp <= 180
+      equip arm
 
 // Пещеры
 :?loc = Caves & item.GetCooldown("bardiche") < 875
@@ -180,7 +181,7 @@ for i = foeEffectsNames.Count()-1..0
     equipL triskelion
   
   ?foe = cool_bat
-    draw.Bg(32, 5, #555)
+    draw.Bg(33, 5, #555)
 
     ?foe.distance > 14
       equipL sword dF
@@ -192,21 +193,18 @@ for i = foeEffectsNames.Count()-1..0
 
     ?foe.distance <= 3
       equipL ice sword dI
-      equipR ice sword D
+      // equipR ice sword D
+      equipR torch
 
   ?foe = spider_boss & foe.hp < foe.maxhp
     activate potion
 
-    ?foe.hp <= 2000
-      ?foe.distance ! 3
-        equipL ice sword
-        equipR compound shield
-      :
-        equipL ice sword dI
-        equipR ice sword D
+    ?foe.hp <= 1600
+      equipL ice sword dI
+      equipR ice sword D
 
-    ?foeEffectsValues[debuffDot] < 1
-      equipL fire wand
+    // ?foeEffectsValues[debuffDot] < 1
+    //  equipL fire wand
 
   ?hp ! maxhp
     loadout 1
@@ -215,8 +213,8 @@ for i = foeEffectsNames.Count()-1..0
 :?loc = Mushroom & (ai.idle | item.left = stone | item.right = quarterstaff | item.right = blade) & item.GetCooldown("bardiche") < 875
   loadout 2
 
-  ?hp ! maxhp
-    loadout 1
+  // ?hp ! maxhp
+  //   loadout 1
 
   // ?foe.distance <= 7 | (foe = boss & foe ! fluff & foe ! epic_snail)
   //   equip bardiche  
@@ -228,60 +226,58 @@ for i = foeEffectsNames.Count()-1..0
     :
       loadout 5
 
+  ?foe = snail & foe = boss
+    // equip bardiche
+    
+    ?foeEffectsValues[debuffChill] < 1
+      equipL ice wand
+      equipR poison wand  
+  
   ?foe = fluff
     loadout 2
-
-  ?foeEffectsValues[debuffDamage] < 1 & foe = epic_snail boss
-    equipL ice wand
-    equipR poison wand
     
   ?buffs.string = lucky_crit
     equip bardiche
   
 // Залы
 :?loc = Halls & item.GetCooldown("bardiche") < 875
-  var find_tomb = 0
-  
-  ?foe = ghost_tomb & foe = boss
-    find_tomb = 1
-  
-  loadout 1
+  var find_tomb = 0  
+  loadout 2
+
+  ?foe = boss & foe = ghost_tomb 
+    loadout 6
 
   ?foe ! immune_to_physical & foe.distance < 6
     loadout 6
-  
-  ?find_tomb = 1
-    equip repeating crossbow
-  
-  ?find_tomb = 1 & foe.distance < 8
-    loadout 1
 
   ?foe = Pallas
-    find_tomb = 0
     ?foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7
       loadout 3
     :
       loadout 6
 
+    ?foeEffectsValues[debuffDamage] < 1
+      loadout 5
+    
     ?foe.count > 2
-      equip bardiche
+      equip arm
 
-  ?buffs.string = lucky_crit
-    equip bardiche
+  // ?buffs.string = lucky_crit
+    // equip bardiche
 
 // Шахта
 :?loc = Mine & (ai.idle | (draw.GetSymbol(21, 18) = "/" & foe = bronze_guardian | item.right = quarterstaff) | item.left = stone) & item.GetCooldown("bardiche") < 875
   equipL aether wand
   equipR shield au
 
-  ?foe = boss & boss ! bomb_cart
-    draw.Bg(21, 18, #555)
-    ?draw.GetSymbol(21, 18) = "/"
+  ?foe = bronze_guardian & foe = boss
+    draw.Bg(21, 19, #555)
+    ?draw.GetSymbol(21, 19) = "/"
       loadout 7
     :
       equip aether crossbow
 
-  ?foe = bomb_cart
+  ?foe = bomb_cart & foe = boss
     ?foe.distance < 30
       equip repeating crossbow
     :
@@ -301,47 +297,68 @@ for i = foeEffectsNames.Count()-1..0
     equipL vigor wand
 
   ?foe = ice_pillar
-    loadout 7
+    equipL aether sword dU -long
+    equipR shiny aether sword dU -long
 
-  ?(foe = boss & foe ! ice_pillar)
-    ?(foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7) & (foe = yeti)
-      loadout 3
-    :
-      ?foe.distance < 9
-        loadout 4
-      :
-        equipR shield au
-        equipL triskelion
+  ?(foe = boss)
+    loadout 4
 
-    ?foe.distance > 30
-      equipL triskelion
-      equipR shield au
-    
-    ?foe = ice_pillar
-      loadout 4
-
-// Храм 
-:?loc = Temple & (ai.idle | item.left = stone | item.right = quarterstaff | item.right = blade) & item.GetCooldown("bardiche") < 875
-  loadout 2
-
-  ?hp ! maxhp
-    loadout 1
-
-  ?foe = acronian_cultist
-    loadout 2
-    
-    ?foe.hp < 500
-      equip bardiche
-
-  ?foe = nagaraja
-    loadout 2
-
-    ?foe.distance < 4
-      ?foe.debuffs.string ! dot
-        loadout 4
-      :
+    ?foe = yeti
+      ?(foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7) & (foe = yeti)
         loadout 3
-        
-  ?foe = nagaraja & foe.state = 1
-    equipR compound shield
-    equipL quest
+      :
+        ?foe.distance < 9
+          loadout 4
+        :
+          equipR shield au
+          equipL triskelion
+
+      ?foe.distance > 30
+        equipL triskelion
+        equipR shield au
+      
+// Храм
+:?loc = Temple
+  ?foe = nagaraja
+    draw.Bg(22, 12, #555)
+    draw.Bg(25, 15, #555)
+    draw.Bg(31, 12, #555)
+
+  ?(draw.GetSymbol(22, 12) = "(" | draw.GetSymbol(25, 15) = "(" | draw.GetSymbol(31, 12) = "(")
+    equip quarterstaff
+    activate R
+
+  ?loc = Temple & (ai.idle | item.left = stone | item.right = quarterstaff | item.right = blade) & item.GetCooldown("bardiche") < 875
+    loadout 2
+
+    ?hp ! maxhp
+      loadout 1
+
+    ?foe = acronian_cultist
+      ?foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 7
+        equip ice staff dI
+      :
+        equip ice crossbow D
+      
+      ?item.GetCooldown("bardiche") > 0
+        equipL ice wand D
+        equipR ice sword D -long
+
+    ?foe = nagaraja
+      ?foeEffectsValues[debuffChill] < 6 | foeEffectsTimes[debuffChill] <= 10
+        equip ice staff dI
+      :
+        equip ice crossbow D
+        activate potion
+
+      ?foe.distance < 4
+        equipL ice sword dI -long
+        equipR ice sword D -long
+      
+      ?foe.distance > 19
+        equipL triskelion
+        equipR compound shield
+
+      ?foe.state = 1
+        equipR compound shield
+        equipL quest

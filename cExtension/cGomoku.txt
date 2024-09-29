@@ -1,0 +1,743 @@
+/* cGomoku.txt
+ * -> Created by Catalyst
+ * -> v1.0
+ * -> import Games/cGomoku
+ *
+ * You can change all values
+ * in editable section
+ *
+ */
+
+// Editable
+var fieldSize = 15
+
+var backgroundColor = #333
+var fieldColor = #333
+var playerColor = #blue
+var botColor = #red
+var cursorColor = #222
+
+var fieldMark = "-"  // Marks can be two symbol wide
+var playerMark = "X"
+var botMark = "O"
+
+// Non editable
+var turn = 1
+var gameState = "init"
+
+var halfLineMode = 0
+
+var wins = storage.Get("Gomoku:wins", 0)
+var loses = storage.Get("Gomoku:loses", 0)
+
+var dx = (screen.w - fieldSize*2) / 2
+var dy = (screen.h - fieldSize) / 2
+
+var blinkX = 0
+var blinkY = 0
+var blinkTime = -42
+
+var isDraw = false
+
+var f = initField(0)
+var s = initField(0.0)
+var q = initField(0.0)
+
+var userSq = 1
+var machSq = -1
+
+var winningMove = 9999999
+
+// Mobile
+var cursorPos = [fieldSize / 2, fieldSize / 2]
+
+var x = 0  // Enum
+var y = 1
+var w = 2
+var h = 3
+var isPressed = 4
+var keyName = 5
+var icon = 6
+
+var buttonLeft = 0  // Enum
+var buttonRight = 1
+var buttonUp = 2
+var buttonDown = 3
+var buttonUpLeft = 4
+var buttonUpRight = 5
+var buttonBototomLeft = 6
+var buttonBottomRight = 7
+var buttonPlace = 8
+var buttonRestart = 9
+var buttonExit = 10
+
+var ldx = (dx - 21) / 2
+var rdx = (dx - 9) / 2
+var buttons = [
+  // x, y, w, h, isPressed, keyName, icon
+  [0 + ldx, screen.h/2, 7, 3, false, primaryBegin, "←"  ],            // left
+  [14 + ldx, screen.h/2, 7, 3, false, primaryBegin, "→"],             // right
+  [7 + ldx, screen.h/2 - 3, 7, 3, false, primaryBegin, "↑"],          // up
+  [7 + ldx, screen.h/2 + 3, 7, 3, false, primaryBegin, "↓"],          // down
+  [0 + ldx, screen.h/2 - 3, 7, 3, false, primaryBegin, "┌"],          // upReft
+  [14 + ldx, screen.h/2 - 3, 7, 3, false, primaryBegin, "┐"],         // upRight
+  [0 + ldx, screen.h/2 + 3, 7, 3, false, primaryBegin, "└"],          // bottomLeft
+  [14 + ldx, screen.h/2 + 3, 7, 3, false, primaryBegin, "┘"],         // bottomLight
+  [screen.w - rdx - 9, screen.h/2 - 1, 9, 5, false, primary, "X"],    // place
+  [screen.w - 21, screen.h - 3, 11, 3, false, primaryEnd, "restart"], // restart
+  [screen.w - 10, screen.h - 3, 10, 3, false, primaryEnd, "exit"],    // exit
+]
+
+func initField(value)
+  var field = []
+  var line
+
+  for y = 0..fieldSize - 1
+    line = []
+    for x = 0..fieldSize - 1
+      line.Add(value)
+    field.Add(line)
+  
+  return field
+
+func gui()
+  var header = string.Format("{0}:{1}", wins, loses)
+  var footer = string.Format("{0}", turn / 2)
+
+  >`@dx@,@dy - 1@,@backgroundColor@,@header@
+  >`@dx + fieldSize*2 - string.Size(footer) - halfLineMode@,@dy + fieldSize@,@backgroundColor@,@footer@
+
+  // Game state
+  ?["win", "lose", "draw"].Contains(gameState)
+    ?gameState = "draw"
+      >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy@,@backgroundColor@,It's a draw
+    :
+      >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy@,@backgroundColor@,You @gameState@
+
+  // Controls
+  ?sys.isPC | sys.isConsole
+    >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy + fieldSize - 2@,@backgroundColor@,[C] - new game
+    >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy + fieldSize - 1@,@backgroundColor@,[X] - exit
+  
+  ?sys.isMobile
+    // Mobile cursor
+    ?halfLineMode
+      draw.Bg(dx + cursorPos[0]*2, dy + cursorPos[1], cursorColor, 1, 1)
+    :
+      draw.Bg(dx + cursorPos[0]*2, dy + cursorPos[1], cursorColor, 2, 1)
+
+    // Hardcoded mobile buttons UI
+    var pivot_x = 0
+    var pivot_y = 0
+
+    for i = 0..buttons.Count() - 1
+      draw.Box(buttons[i][x], buttons[i][y], buttons[i][w], buttons[i][h], backgroundColor)
+
+      pivot_x = buttons[i][x] + (buttons[i][w] - string.Size(buttons[i][icon])) / 2
+      pivot_y = buttons[i][y] + buttons[i][h] / 2
+
+      >`@pivot_x@,@pivot_y@,@backgroundColor@,@buttons[i][icon]@
+
+  /* Debug /
+  >`0,0,#red,dx=@dx@
+  // */
+
+func cout()
+  var charColor
+  var charMark
+
+  for y = 0..fieldSize - 1
+    for x = 0..fieldSize - 1
+      ?f[y][x] = 0
+        charColor = fieldColor
+        charMark = fieldMark
+      :?f[y][x] = userSq
+        charColor = playerColor
+        charMark = playerMark
+      :
+        charColor = botColor
+        charMark = botMark
+
+      >`@dx + x*2@,@dy + y@,@charColor@,@charMark@
+  
+func blink()
+  var dt = totaltime - blinkTime
+
+  ?dt < 20 &
+  ^dt % 10 >= 5
+    >`@dx + blinkX*2@,@dy + blinkY@,#222,@fieldMark@
+
+func inputs()
+  ?sys.isMobile
+    for i = 0..buttons.Count() - 1
+      ?key = buttons[i][keyName] &
+      ^input.x >= buttons[i][x] & input.x < buttons[i][x] + buttons[i][w] &
+      ^input.y >= buttons[i][y] & input.y < buttons[i][y] + buttons[i][h]
+        buttons[i][isPressed] = true
+      :
+        buttons[i][isPressed] = false
+
+    // Left
+    ?cursorPos[x] > 0
+      ?buttons[buttonLeft][isPressed]
+        cursorPos[x] -= 1
+      
+      ?buttons[buttonUpLeft][isPressed] & cursorPos[x] > 0
+        cursorPos[x] -= 1
+        cursorPos[y] -= 1
+
+      ?buttons[buttonBototomLeft][isPressed] & cursorPos[x] < fieldSize - 1
+        cursorPos[x] -= 1
+        cursorPos[y] += 1
+
+    // Right
+    ?cursorPos[x] < fieldSize - 1
+      ?buttons[buttonRight][isPressed]
+        cursorPos[x] += 1
+
+      ?buttons[buttonUpRight][isPressed] & cursorPos[y] > 0
+        cursorPos[x] += 1
+        cursorPos[y] -= 1
+
+      ?buttons[buttonBottomRight][isPressed] & cursorPos[y] < fieldSize - 1
+        cursorPos[x] += 1
+        cursorPos[y] += 1
+
+    // Up and down
+    ?buttons[buttonUp][isPressed] & cursorPos[y] > 0
+      cursorPos[y] -= 1
+
+    ?buttons[buttonDown][isPressed] & cursorPos[y] < fieldSize - 1
+      cursorPos[y] += 1
+  
+  ?key = bumpRBegin | buttons[buttonRestart][isPressed]  // C
+    restartGame()
+
+  :?key = backBegin | buttons[buttonExit][isPressed] // X
+    loc.Leave()
+
+func restartGame()
+  f = initField(0)
+  s = initField(0.0)
+  q = initField(0.0)
+
+  turn = 1
+  gameState = "game"
+
+func turns()
+  ?gameState ! "game"
+    return
+
+  ?turn % 2 = 1
+    var turnPos = playerInput()
+    var playerSign = userSq
+    
+    ?!turnPos  // No input
+      return
+
+    play xp_tick
+  :
+    var turnPos = botInput()
+    var playerSign = machSq
+    play treasure_item_pop
+
+    // Blink for bot move
+    blinkTime = totaltime
+    blinkX = turnPos[0]
+    blinkY = turnPos[1]
+
+  // Place move on board
+  var x = turnPos[0]
+  var y = turnPos[1]
+
+  f[y][x] = playerSign
+  
+  // Check game state
+  ?isDraw
+    gameState = "draw"
+    play mindstone_off
+  :?winningPos(x, y, playerSign) = winningMove
+    ?playerSign = machSq
+      gameState = "lose"
+      loses = storage.Incr("Gomoku:loses")
+      play uulaa_voice
+    :
+      gameState = "win"
+      wins = storage.Incr("Gomoku:wins")
+      play ui_starnew
+  :
+    turn++
+
+func playerInput()
+  var ix = input.x
+  var iy = input.y
+
+  ?buttons[buttonPlace][isPressed]
+    ix = dx + cursorPos[0] * 2
+    iy = dy + cursorPos[1]
+
+  ?key = primaryEnd
+    ?ix - dx = -1  // Reason: -1 / 2 = 0
+      return false
+
+    ?halfLineMode & ix % 2 = (dx + 1) % 2  // Check only one symbol in halfline mode
+      return false
+
+    var x = (ix - dx) / 2
+    var y = (iy - dy)
+
+    ?0 <= x & x < fieldSize &
+    ^0 <= y & y < fieldSize &
+    ^f[y][x] = 0
+      return [x, y]
+
+  return false
+
+func botInput()
+  var nMax = 0
+  var xMax = [0, 0, 0, 0, 0, 0, 0, 0]
+  var yMax = [0, 0, 0, 0, 0, 0, 0, 0]
+  
+  var maxS = evaluatePos(s, userSq)
+  var maxQ = evaluatePos(q, machSq)
+
+  ?maxQ >= maxS
+    maxS = -1
+    for y = 0..fieldSize-1
+      for x = 0..fieldSize-1
+        ?q[y][x] = maxQ
+          ?(s[y][x] > maxS)
+            maxS = s[y][x]
+            nMax = 0
+
+          ?s[y][x] = maxS
+            yMax[nMax] = y
+            xMax[nMax] = x
+            nMax++
+  :
+    maxQ = -1
+    for y = 0..fieldSize - 1
+      for x = 0..fieldSize - 1
+        ?s[y][x] = maxS
+          ?q[y][x] > maxQ
+            maxQ = q[y][x]
+            nMax = 0
+
+          ?q[y][x] = maxQ
+            yMax[nMax] = y
+            xMax[nMax] = x
+            nMax++
+
+  var randomK = math.FloorToInt(rngf * nMax)
+
+  var x = xMax[randomK]
+  var y = yMax[randomK]
+
+  return [x, y]
+
+func evaluatePos(a, mySq)
+  var w = [0, 20, 17, 15.4, 14, 10]  // Some magic numbers
+  var nPos = [0, 0, 0, 0, 0]
+  var maxA = -1
+
+  isDraw = true
+  for y = 0..fieldSize - 1 
+    for x = 0..fieldSize - 1
+      ?f[y][x] ! 0
+        a[y][x] = -1
+        continue
+
+      ?!hasNeighbors(x, y)
+        a[y][x] = -1
+        continue
+
+      var wp = winningPos(x, y, mySq)
+
+      ?wp > 0
+        a[y][x] = wp
+      :
+        var minM = y - 4
+        ?minM < 0
+          minM = 0
+        
+        var minN = x - 4
+        ?minN < 0
+          minN = 0
+        
+        var maxM = y + 5
+        ?maxM > fieldSize
+          maxM = fieldSize
+        
+        var maxN = x + 5
+        ?maxN > fieldSize
+          maxN = fieldSize
+        
+        nPos[1] = 1
+        var A1 = 0
+        var m = 1
+        
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(x + m < maxN & f[y][x + m] ! -mySq)
+            break
+
+          nPos[1] += 1
+          A1 += w[m] * f[y][x + m]
+          m++
+
+        ?x + m >= fieldSize | f[y][x + m] = -mySq
+          ?f[y][x + m - 1] = mySq
+            A1 -= w[5] * mySq
+          
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(x - m >= minN & f[y][x - m] ! -mySq)
+            break
+
+          nPos[1] += 1
+          A1 += w[m] * f[y][x - m]
+          m++ 
+
+        ?x - m < 0 | f[y][x - m] = -mySq
+          ?f[y][x - m + 1] = mySq
+            A1 -= w[5] * mySq
+        
+        ?nPos[1] > 4
+          isDraw = false
+
+        nPos[2] = 1
+        var A2 = 0
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y + m < maxM & f[y + m][x] ! -mySq)
+            break
+          nPos[2] += 1
+          A2 += w[m] * f[y + m][x]
+          m++
+
+        ?(y + m >= fieldSize | f[y + m][x] = -mySq)
+          ?f[y + m - 1][x] = mySq
+            A2 -= w[5] * mySq
+
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y - m >= minM & f[y - m][x] ! -mySq)
+            break
+          nPos[2] += 1
+          A2 += w[m] * f[y - m][x]
+          m++
+        
+        ?y - m < 0 | f[y - m][x] = -mySq
+          ?f[y - m + 1][x] = mySq
+            A2 -= w[5] * mySq
+
+        ?nPos[2] > 4
+          isDraw = false
+
+        nPos[3] = 1
+        var A3 = 0
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y + m < maxM & x + m < maxN & f[y + m][x + m] ! -mySq)
+            break
+          nPos[3] += 1
+          A3 += w[m] * f[y + m][x + m]
+          m++
+        
+        ?(y + m >= fieldSize | x + m >= fieldSize | f[y + m][x + m] = -mySq)
+          ?f[y + m - 1][x + m - 1] = mySq
+            A3 -= w[5] * mySq
+        
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y - m >= minM & x - m >= minN & f[y - m][x - m] ! -mySq)
+            break
+          nPos[3] += 1
+          A3 += w[m] * f[y - m][x - m]
+          m++
+
+        ?y - m < 0 | x - m < 0 | f[y - m][x - m] = -mySq
+          ?f[y - m + 1][x - m + 1] = mySq
+            A3 -= w[5] * mySq
+
+        ?nPos[3] > 4
+          isDraw = false
+
+        nPos[4] = 1
+        var A4 = 0
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y + m < maxM & x - m >= minN & f[y + m][x - m] ! -mySq)
+            break
+          nPos[4] += 1
+          A4 += w[m] * f[y + m][x - m]
+          m++
+
+        ?y + m >= fieldSize | x - m < 0 | f[y + m][x - m] = -mySq
+          ?f[y + m - 1][x - m + 1] = mySq
+            A4 -= (w[5] * mySq)
+
+        m = 1
+        for _ = 0..1984  // Waiting for a while loops...
+          ?!(y - m >= minM & x + m < maxN & f[y - m][x + m] ! -mySq)
+            break
+          nPos[4] += 1
+          A4 += w[m] * f[y - m][x + m]
+          m++
+
+        ?y - m < 0 | x + m >= fieldSize | f[y - m][x + m] = -mySq
+          ?f[y - m + 1][x + m - 1] = mySq
+            A4 -= w[5] * mySq
+
+        var dirA = [0, 0, 0, 0, 0]
+
+        ?nPos[4] > 4
+          isDraw = false
+        
+        ?nPos[1] > 4
+          dirA[1] = A1 * A1
+
+        ?nPos[2] > 4
+          dirA[2] = A2 * A2
+        
+        ?nPos[3] > 4
+          dirA[3] = A3 * A3
+        
+        ?nPos[4] > 4
+          dirA[4] = A4 * A4
+
+        A1 = 0
+        A2 = 0
+        for k = 1..4
+          ?dirA[k] >= A1
+            A2 = A1
+            A1 = dirA[k]
+        
+        a[y][x] = A1 + A2
+      
+      ?a[y][x] > maxA
+        maxA = a[y][x]
+  
+  return maxA
+
+func hasNeighbors(x, y)
+  ?x > 0 & f[y][x - 1] ! 0
+    return true  // Left
+
+  ?x + 1 < fieldSize & f[y][x + 1] ! 0
+    return true  // Right
+
+  ?y > 0
+    ?f[y - 1][x] ! 0
+      return true  // Top
+    ?x > 0 & f[y - 1][x - 1] ! 0
+      return true  // Top left
+    ?x + 1 < fieldSize & f[y - 1][x + 1] ! 0
+      return true  // Top right
+  
+  ?y + 1 < fieldSize
+    ?f[y + 1][x] ! 0
+      return true  // Bottom
+    ?x > 0 & f[y + 1][x - 1] ! 0
+      return true  // Bottom left
+    ?x + 1 < fieldSize & f[y + 1][x + 1] ! 0
+      return true  // Bottom right
+  
+  return false
+  
+func winningPos(x, y, mySq)
+  var test3 = 0
+  var test4 = 0
+
+  var L = 1
+  var m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(x + m < fieldSize & f[y][x + m] = mySq) 
+      break
+    L++
+    m++
+
+  var m1 = m
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(x - m >= 0 & f[y][x - m] = mySq)
+      break
+    L++
+    m++
+  
+  var m2 = m
+  ?L > 4
+    return winningMove
+
+  var side1 = false
+  ?x + m1 < fieldSize & f[y][x + m1] = 0
+    side1 = true
+
+  var side2 = false
+  ?x - m2 >= 0 & f[y][x - m2] = 0
+    side2 = true
+
+  ?L = 4 & (side1 | side2)
+    test3++
+
+  ?side1 & side2
+    ?L = 4
+      test4 = 1
+    ?L = 3
+      test3++
+
+  L = 1
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y + m < fieldSize & f[y + m][x] = mySq)
+      break
+    L++
+    m++
+
+  m1 = m
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y - m >= 0 & f[y - m][x] = mySq)
+      break
+    L++
+    m++
+
+  m2 = m
+  ?L > 4
+    return winningMove
+  
+  ?y + m1 < fieldSize & f[y + m1][x] = 0
+    side1 = true
+  :
+    side1 = false
+
+  ?y - m2 >= 0 & f[y - m2][x] = 0
+    side2 = true
+  :
+    side2 = false
+
+  ?L = 4 & (side1 | side2)
+    test3++
+
+  ?side1 & side2
+    ?L = 4
+      test4 = 1
+    ?L = 3
+      test3++
+  
+  L = 1
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y + m < fieldSize & x + m < fieldSize & f[y + m][x + m] = mySq)
+      break
+    L++
+    m++
+
+  m1 = m
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y - m >= 0 & x - m >= 0 & f[y - m][x - m] = mySq)
+      break
+    L++
+    m++
+
+  m2 = m
+  ?L > 4
+    return winningMove
+  
+  ?y + m1 < fieldSize & x + m1 < fieldSize & f[y + m1][x + m1] = 0
+    side1 = true
+  :
+    side1 = false
+
+  ?y - m2 >= 0 & x - m2 >= 0 & f[y - m2][x - m2] = 0
+    side2 = true
+  :
+    side2 = false
+
+  ?L = 4 & (side1 | side2)
+    test3++
+
+  ?side1 & side2
+    ?L = 4
+      test4 = 1
+    ?L = 3
+      test3++
+
+  L = 1
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y + m < fieldSize & x - m >= 0 & f[y + m][x - m] = mySq)
+      break
+    L++
+    m++
+
+  m1 = m
+  m = 1
+  for _ = 0..1984  // Waiting for a while loops...
+    ?!(y - m >= 0 & x + m < fieldSize & f[y - m][x + m] = mySq)
+      break
+    L++
+    m++
+
+  m2 = m
+  ?L > 4
+    return winningMove
+
+  ?y + m1 < fieldSize & x - m1 >= 0 & f[y + m1][x - m1] = 0
+    side1 = true
+  :
+    side1 = false
+
+  ?y - m2 >= 0 & x + m2 < fieldSize & f[y - m2][x + m2] = 0
+    side2 = true
+  :
+    side2 = false
+
+  ?L = 4 & (side1 | side2)
+    test3++
+
+  ?side1 & side2
+    ?L = 4
+      test4 = 1
+    ?L = 3
+      test3++
+  
+  ?test4
+    return 8888888
+    
+  ?test3 >= 2
+    return 7777777
+
+  return -1
+
+// Main loop
+func main()
+  draw.Clear()
+  turns()
+  cout()
+  gui()
+  blink()
+  inputs()
+
+// Prepare game
+?loc.begin
+  disable banner
+  disable hud
+  disable pause
+  disable player
+  disable abilities
+  disable loadout input
+  disable loadout print
+
+  ambient.Stop()
+  music.Stop()
+
+  // Enable half line mode
+  ?string.Size(fieldMark) = 1  
+    halfLineMode = 1
+
+// Block all inputs first 15 tics
+?gameState = "init" & totaltime >= 15
+  gameState = "game"
+
+main()

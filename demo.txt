@@ -1,5 +1,5 @@
 // Demo script
-disable loadout print
+// disable loadout print
 
 var i = 0
 var fish = ascii
@@ -36,7 +36,7 @@ Test(42, 'a', [0, 10], fish)
 equip sword D dp dP dh dL du dU df dF di dI A ap aP ah aL au aU af aF ai aI
 item.left = sword D dP D dp dP dh dL du dU df dF di dI A ap aP ah aL au aU af aF ai aI
 
-// Print
+// Print 
 >text
 >(text
 >`0,0,text
@@ -47,7 +47,7 @@ item.left = sword D dP D dp dP dh dL du dU df dF di dI A ap aP ah aL au aU af aF
 >f10,10,text
 
 >onix
->h8tel
+>h80tel
 >catalyst
 >force
 
@@ -191,7 +191,6 @@ var comment_var = 300
 */
 
 // Variables
-var bign = math.BigNumber(199999999)
 var vstring = '0'
 var vstring1 = "0"
 var vstring2 = ascii string asciiend
@@ -245,8 +244,6 @@ ui.AddStyle()
 ui.AddText()
 ui.Clear()
 ui.ShowBanner()
-ui.OpenInv()
-ui.OpenMind()
 
 // Color
 color.FromRGB()
@@ -254,18 +251,25 @@ color.ToRGB()
 color.Lerp()
 color.Random()
 
-// Draw
-draw.Bg()
-draw.Box()
-draw.Clear()
-draw.GetSymbol()
-draw.Player()
+// Encounter
+encounter.isElite
+encounter.eliteMod
+
+// Event
+event.GetObjectiveId()
+event.GetObjectiveProgress()
+event.GetObjectiveGoal()
 
 // Item
 item.left
-item.right
+item.left.state
+item.right.state
+item.right.time
+item.left.time
 item.left.id
+item.left.gp
 item.right.id
+item.left.gp
 item.potion
 item.CanActivate()
 item.GetCooldown()
@@ -275,35 +279,6 @@ item.GetCount()
 player.direction
 player.name
 player.ShowScaredFace()
-
-// Stonescript
-stonescript.SetMaxExecutionTime()
-
-// Key
-key.Bind()
-key.GetActKey()
-key.GetActKey2()
-key.GetActLabel()
-key.GetKeyAct()
-key.ResetBinds()
-
-// Summons
-summon.count
-summon.GetId()
-summon.GetName()
-summon.GetState()
-summon.GetTime()
-summon.GetVar()
-
-// sys
-sys.cacheRemoteFiles
-sys.fileUrl
-sys.SetFileUrl()
-
-sys.os
-sys.isMobile
-sys.isPc
-sys.isConsole
 
 // Screen
 screen.i
@@ -330,8 +305,6 @@ time.FormatCasual()
 time.FormatDigital()
 
 // Math
-math.Atan()
-math.Atan2()
 math.Abs()
 math.Sign()
 math.Min()
@@ -380,6 +353,19 @@ string.Sub()
 string.ToLower()
 string.ToUpper()
 
+?0 > 0 >= 0 < 0 <= 
+^0 | 0 & 0 = 0 & (0)
+  equipR stone
+  equipL stone
+  equip stone
+:? 0
+  // none
+:
+  /*
+    1
+    2
+  */
+
 // All functions [debug]
 loc
 loc.id
@@ -390,7 +376,6 @@ loc.loop
 loc.bestTime
 loc.averageTime
 foe
-foe.getCount()
 foe.name
 foe.distance
 foe.count
@@ -399,8 +384,6 @@ foe.maxhp
 foe.armor
 foe.maxarmor
 foe.buffs.count
-buffs.oldest
-debuffs.oldest
 foe.buffs.string
 foe.debuffs.count
 foe.debuffs.string
@@ -411,11 +394,7 @@ item.left
 item.right
 item.left.id
 item.right.id
-item.left.state
-item.left.time
 item.potion
-item.GetLoadoutL()
-item.GetLoadoutR()
 harvest
 harvest.distance
 pickup
@@ -478,11 +457,9 @@ ascii te @input.x = 32@ xt asciiend
 
 disable abilities
 enable abilities
-disable banner
+disable banner	
 enable banner	
 disable hud	
-disable hud	pfarbu
-enable hud ubr
 enable hud	
 disable loadout input
 enable loadout input	
