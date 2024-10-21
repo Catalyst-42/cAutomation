@@ -1,0 +1,65 @@
+var utils = import c/Utils
+
+var casualLeft =  "poison sword D +21  mshiny -long"
+var casualRight = "poison sword D +21 -shiny -long"
+
+var iceWand = "ice wand +21  shiny"
+var iceWand = "ice wand +21 -shiny"
+
+var wandLeft = "poison wand D +21 shiny"
+var wandRight = "poison wand D +21 -shiny"
+
+utils.walk(16)
+utils.quarterstaff()
+
+?loc.begin
+  brew stone + bronze
+
+?foe.distance <= 20
+  ?foe ! explode & foe ! boss
+    equipL @wandLeft@
+    equipR @wandRight@
+
+  ?foe = epic_snail & foe.maxarmor > 100
+    ?foe.armor > 0
+      utils.bardiche()
+    :?foe.distance = 6
+      utils.moondial(casualLeft, casualRight)
+
+  ?foe = fluff
+    utils.mind(5)
+
+  ?foe = mushroom_boss
+    ?foe.state = 32 & foe.time = 47
+      utils.mind(10)
+
+    ?foe.distance > 6
+      equipL @casualLeft@
+      equipR @casualRight@
+    :
+      >`0,0,#f0f,MOON
+      utils.moondial(casualLeft, casualRight)
+    
+    ?foe = mushroom_boss_fat
+      ?item.GetCooldown("bardiche") = 880
+        activate potion
+
+    ?foe = phase1 & 
+    ^foe.debuffs.GetCount("debuff_armor_fatigue") = 0
+      utils.hammer()
+
+    utils.dash()
+
+    ?foe = mushroom_boss_fat
+      activate potion
+
+// // Farm bashing attacks
+// ?loc.stars <= 15
+//   ?foe.distance > 12
+//     equipL triskelion
+//     utils.dash()
+//   :
+//     equip arm
+
+utils.collect()
+utils.wait()

@@ -1,1 +1,19 @@
-// IDGAF, just get bored already.
+// Locations
+?loc = Mushroom
+  import c/Auto/Mushroom
+
+?loc = Deadwood
+  import c/Auto/Deadwood
+
+?loc = Mine
+  import c/Auto/Mine
+
+?loc = Caves
+  import c/Caves
+
+// Misc
+?loc = Shop
+  import c/cExtension/cShop
+
+?item.right ! mask
+  >o-1,1,└#┘

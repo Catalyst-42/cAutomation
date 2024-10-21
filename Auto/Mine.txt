@@ -1,0 +1,8 @@
+var utils = import c/Utils
+
+utils.walk(16)
+utils.dash()
+
+?foe.distance < 8
+    equipL aether wand
+    equipR aether shield

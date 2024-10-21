@@ -1,0 +1,39 @@
+var utils = import c/Utils
+
+var casualLeft =  "fire sword D +21  shiny -long"
+var casualRight = "fire sword D +21 -shiny -long"
+
+var longLeft =  "fire sword D +21  shiny long"
+var longRight = "fire sword D +21 -shiny long"
+
+var wandLeft =  "fire wand D +21  shiny"
+var wandRight = "fire wand D +21 -shiny"
+
+
+utils.walk(16)
+utils.quarterstaff()
+
+?loc.begin
+  brew stone + bronze
+
+?foe.distance <= 20
+  ?foe ! boss
+    ?totaltime % 5 <= 3
+      equip skeleton arm
+    :
+      equipR hatchet
+      equipL triskelion
+
+  ?foe = tree_boss
+    // ?foe.hp < 20
+    //   equipL talisman
+    //   equipR hatchet
+    // :
+    utils.moondial(casualLeft, casualRight)
+
+utils.dash()
+utils.collect()
+utils.wait()
+
+>`@0@,@screen.h - 3@,#f0f,L:@item.left@
+>`@0@,@screen.h - 2@,#f0f,R:@item.right@

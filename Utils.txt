@@ -1,0 +1,110 @@
+func walk(dist)
+  ?foe.distance <= dist
+    return
+  
+  ?hp ! maxhp
+    ?totaltime % 2 = 0
+      equipL triskelion
+  :
+    equipL triskelion
+  
+  ?foe.distance < 25
+    ?foe = poison
+      equipR ice shield A
+    :?foe = vigor
+      equipR poison shield A
+    :?foe = aether
+      equipR vigor shield A
+    :?foe = fire
+      equipR aether shield A
+    :?foe = ice
+      equipR fire shield A
+    :
+      equipR ice shield ai
+  :
+    ?armor < 13
+      equipR compound shield F8ST
+    :
+      equipR compound shield N2X24
+
+func wait()
+  ?ai.paused
+    equipL quest
+    equipR compound shield N2X24
+
+
+func collect()
+  ?pickup & pickup.distance <= 16
+    equipR star
+
+
+func mind(dist)
+  ?item.GetCooldown("mind") <= 0 &
+  ^foe.distance < dist
+    equipR mind stone
+    ?item.CanActivate()
+      activate R
+
+
+func quarterstaff()
+  ?time <= 1 |
+  ^!ai.paused
+    return
+
+  ?foe.distance > 16 &
+  ^item.GetCooldown("quarterstaff") = 0
+    equip quarterstaff
+    ?item.CanActivate()
+      activate R
+
+
+func dash()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^foe ! explode
+    ?item.GetCooldown("bash") <= 0
+      equipR bashing shield
+    :?item.GetCooldown("dash") <= 0
+      equipR dashing shield
+
+
+func aac(rightItem, leftItem)
+  ?foe.distance > 6
+    return
+
+  ?item.right.state = 3
+    >`@screen.w - 1@,1,#f0f,R
+    equipR *0 +0 sword  // Trash stub
+    equipR @rightItem@
+
+  ?item.left.state = 3
+    >`@screen.w - 2@,1,#f0f,L
+    equipL *0 +0 wand  // Trash stub
+    equipL @leftItem@
+
+
+func moondial(itemLeft, itemRight)
+  ?totaltime % 3 = 1
+    equipL moon
+    equipR @itemRight@
+
+  :?totaltime % 3 = 2
+    equipL moon
+    equipR @itemLeft@
+
+  :
+    equipL @itemLeft@
+    equipR @itemRight@
+
+
+func hammer()
+  ?item.GetCooldown("hammer") <= 0 & item.CanActivate()
+    equip heavy hammer
+    activate R
+
+
+func bardiche()
+  ?(item.GetCooldown("bardiche") = 0 | item.GetCooldown("bardiche") >= 875) &
+  ^foe.distance <= 11
+    equip bardiche shiny
+    activate R

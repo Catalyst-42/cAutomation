@@ -1,5 +1,22 @@
-var resources = [res.stone, res.wood, res.tar, res.bronze, res.ki, res.crystals, totalgp]
-var icons = ["o", "/", "≈", ":", "@", "♦", "*"]
+var resources = [
+  res.stone,
+  res.wood,
+  res.tar,
+  res.bronze,
+  res.ki,
+  res.crystals,
+  totalgp
+]
+
+var icons = [
+  "o",
+  "/",
+  "≈",
+  ":",
+  "@",
+  "♦",
+  "*"
+]
 
 var offset = 5
 
@@ -9,6 +26,6 @@ var t = -90
   t = math.Lerp(t, 0, 1.0/60.0 * 8)  // deltaTime * 8
 
 // Display all values
-draw.Box(math.CeilToInt(t) + offset, 6, 14, 9, #555, ui.AddStyle("┌─┐│ │└─┘"))
+draw.Box(math.CeilToInt(t) + offset, 6, 14, resources.Count() + 2, #555, ui.AddStyle("┌─┐│ │└─┘"))
 for i = 0..resources.Count()-1
   >`@math.CeilToInt(t) + offset + 1@,@7+i@,#fff,@icons[i]@ @resources[i]@
