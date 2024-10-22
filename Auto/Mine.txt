@@ -1,8 +1,11 @@
 var utils = import c/Utils
 
 utils.walk(16)
+utils.quarterstaff()
 utils.dash()
 
 ?foe.distance < 8
-    equipL aether wand
+    equipL aether sword -long
     equipR aether shield
+
+utils.collect()

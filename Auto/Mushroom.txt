@@ -10,24 +10,39 @@ var wandLeft = "poison wand D +21 shiny"
 var wandRight = "poison wand D +21 -shiny"
 
 utils.walk(16)
-utils.quarterstaff()
 
 ?loc.begin
   brew stone + bronze
 
 ?foe.distance <= 20
-  ?foe ! explode & foe ! boss
+  ?screen.i = 1
+    equip bardiche
+    ?foe.armor > 500
+      utils.bardiche()
+  :
     equipL @wandLeft@
     equipR @wandRight@
 
-  ?foe = epic_snail & foe.maxarmor > 100
-    ?foe.armor > 0
-      utils.bardiche()
-    :?foe.distance = 6
-      utils.moondial(casualLeft, casualRight)
 
   ?foe = fluff
-    utils.mind(5)
+    // Farm fluff fissure
+    // activate potion
+    // ?foe.hp > 232
+    //   equipL @wandLeft@
+    //   equipR @wandRight@
+    // :?foe.hp > 88
+    //   equipL talisman
+    //   equipR @wandRight@
+    // :?foe.hp > 52
+    //   equipL ice wand i
+    //   equipR ice wand D
+    // :
+    //   equipL talisman
+    //   equipR fissure
+    
+    equip shovel
+    utils.dash()
+    // utils.mind(8)
 
   ?foe = mushroom_boss
     ?foe.state = 32 & foe.time = 47
@@ -37,8 +52,15 @@ utils.quarterstaff()
       equipL @casualLeft@
       equipR @casualRight@
     :
-      >`0,0,#f0f,MOON
+      activate potion
       utils.moondial(casualLeft, casualRight)
+    // ?foe.hp > 100
+    // :?foe.hp > 30
+    //   equipL talisman
+    //   equipR sword +11 -long
+    // :
+    //   equipL talisman
+    //   equipR fissure
     
     ?foe = mushroom_boss_fat
       ?item.GetCooldown("bardiche") = 880
@@ -61,5 +83,9 @@ utils.quarterstaff()
 //   :
 //     equip arm
 
+?screen.i > 1
+  utils.blade()
+
 utils.collect()
+utils.quarterstaff()
 utils.wait()

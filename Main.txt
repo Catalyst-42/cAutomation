@@ -10,7 +10,6 @@
 
 ?loc = Caves
   import c/Auto/Caves
-  // import c/Caves
 
 ?loc = Halls
   import c/Auto/Halls

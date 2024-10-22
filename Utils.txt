@@ -1,14 +1,15 @@
+var bladeTimeout = 20
+
 func walk(dist)
   ?foe.distance <= dist
     return
   
-  ?hp ! maxhp
-    ?totaltime % 2 = 0
-      equipL triskelion
+  ?hp ! maxhp 
+    equipL ouroboros
   :
     equipL triskelion
   
-  ?foe.distance < 25
+  ?foe.distance > 20 & foe.distance < 25
     ?foe = poison
       equipR ice shield A
     :?foe = vigor
@@ -21,7 +22,7 @@ func walk(dist)
       equipR fire shield A
     :
       equipR ice shield ai
-  :
+  :?foe.distance >= 25
     ?armor < 13
       equipR compound shield F8ST
     :
@@ -47,11 +48,10 @@ func mind(dist)
 
 
 func quarterstaff()
-  ?time <= 1 |
-  ^!ai.paused
+  ?time <= 1 | !ai.paused
     return
 
-  ?foe.distance > 16 &
+  ?foe.distance > 20 &
   ^item.GetCooldown("quarterstaff") = 0
     equip quarterstaff
     ?item.CanActivate()
@@ -60,12 +60,25 @@ func quarterstaff()
 
 func dash()
   ?foe.distance >= 11 &
-  ^foe.distance <= 16 &
-  ^foe ! explode
+  ^foe.distance <= 16
     ?item.GetCooldown("bash") <= 0
       equipR bashing shield
     :?item.GetCooldown("dash") <= 0
       equipR dashing shield
+
+
+func blade()
+  ?item.GetCooldown("blade") <= 0 &
+  ^foe.distance < 30
+    screen.next()
+    bladeTimeout--
+
+    ?bladeTimeout = 0
+      equip blade
+      activate R
+      
+      screen.ResetOffset()
+      bladeTimeout = 20
 
 
 func aac(rightItem, leftItem)
@@ -74,12 +87,12 @@ func aac(rightItem, leftItem)
 
   ?item.right.state = 3
     >`@screen.w - 1@,1,#f0f,R
-    equipR *0 +0 sword  // Trash stub
+    equipR *10 +21 sword  // Trash stub
     equipR @rightItem@
 
   ?item.left.state = 3
     >`@screen.w - 2@,1,#f0f,L
-    equipL *0 +0 wand  // Trash stub
+    equipL *10 +21 wand  // Trash stub
     equipL @leftItem@
 
 

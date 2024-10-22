@@ -1,0 +1,38 @@
+var utils = import c/Utils
+
+var wandLeft = "vigor wand +21 dL shiny"
+var wandRight = "vigor wand +21 dL -shiny"
+
+var casualLeft = "vigor sword +21 D"
+var casualRight = "vigor sword +21 dL"
+
+
+?loc.begin
+  brew stone + bronze
+
+utils.walk(16)
+
+?foe.distance < 16
+  equipL @wandLeft@
+  equipR @wandRight@
+
+?foe ! immune_to_physical & foe.distance <= 8
+  utils.aac(casualLeft, casualRight)
+
+?foe ! boss
+  utils.dash()
+
+?foe = pallas
+  ?foe.hp > 250
+    ?foe.count > 1 & foe = phase2
+      equip arm
+    :
+      activate potion
+      utils.moondial(casualLeft, casualRight)
+  :
+    equipL moon
+    equipR crossbow
+
+utils.wait()
+utils.blade()
+utils.dash()

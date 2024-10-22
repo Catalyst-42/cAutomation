@@ -1,0 +1,33 @@
+var utils = import c/Utils
+
+utils.walk(16)
+
+var casualLeft = "ice sword +21  shiny -long"
+var casualRight = "ice sword +21 -shiny -long"
+
+?foe.distance <= 8
+  ?foe ! boss
+    utils.moondial(casualLeft, casualRight)
+
+  :?foe = cool_bat & foe.hp > 0
+    ?foe.debuffs.GetCount("stun") = 0 |
+    ^foe.debuffs.GetTime("stun") < 7
+      equipL moon
+      equipR ice hammer dI
+    :   
+      utils.moondial(casualLeft, casualRight)
+    
+  :?foe = spider_boss & foe.hp > 0
+    ?foe.state = 142 & foe.time >= 59
+      utils.mind(4)
+    :
+      activate potion
+      utils.moondial(casualLeft, casualRight)
+
+?screen.i = 2
+  utils.blade()
+
+utils.dash()
+utils.quarterstaff()
+utils.wait()
+utils.collect()
