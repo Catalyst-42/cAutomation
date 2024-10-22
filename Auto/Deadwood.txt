@@ -34,6 +34,3 @@ utils.quarterstaff()
 utils.dash()
 utils.collect()
 utils.wait()
-
->`@0@,@screen.h - 3@,#f0f,L:@item.left@
->`@0@,@screen.h - 2@,#f0f,R:@item.right@

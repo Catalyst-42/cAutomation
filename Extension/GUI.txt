@@ -1,0 +1,40 @@
+// GUI elements
+disable hud arbu
+
+?loc.isQuest
+  enable banner
+  enable npcDialog
+
+// Run info
+var x = 1
+var y = 1
+
+var loops = 0
+
+?loc.loop
+  loops++
+
+// Display
+>`@x@,@y@,#a9a9a9,↑#@loc.bestTime / 30@s
+>`@x@,@y + 1@,#a9a9a9,=#@totaltime / 30@s
+>`@x@,@y + 2@,#a9a9a9,≈#@loc.averageTime / 30@s
+
+?loops ! 0
+  >`@x@,@y + 3@,#a9a9a9,∞#@loops@
+
+// AI states
+?false
+  var aiStates = ""
+  aiStates = ""
+
+  ?ai.enabled
+    aiStates += "enabled "
+  ?ai.idle
+    aiStates += "idle "
+  ?ai.paused
+    aiStates += "paused "
+  ?ai.walking 
+    aiStates += "walking"
+
+  >`@x@,@y + 5@,#f0f,ai: @aiStates@
+

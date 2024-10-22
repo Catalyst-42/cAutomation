@@ -1,5 +1,9 @@
 var bladeTimeout = 20
 
+func flush(x, y, sign)
+  >`@screen.w - x@,@y@,#f0f,@sign@
+
+
 func walk(dist)
   ?foe.distance <= dist
     return
@@ -22,11 +26,13 @@ func walk(dist)
       equipR fire shield A
     :
       equipR ice shield ai
+
   :?foe.distance >= 25
     ?armor < 13
       equipR compound shield F8ST
     :
       equipR compound shield N2X24
+
 
 func wait()
   ?ai.paused
@@ -39,20 +45,39 @@ func collect()
     equipR star
 
 
+// Summons
+func aether()
+  ?summon.GetId() ! "voidweaver" &
+  ^foe ! boss
+    equipR aether talisman
+    equipL triskelion
+    activate R
+
+func fire() 
+  ?summon.GetId() ! "cinderwisp" &
+  ^foe = boss
+    equipR fire talisman
+    equipL triskelion
+    activate R
+
+// Defensive abilities
 func mind(dist)
   ?item.GetCooldown("mind") <= 0 &
   ^foe.distance < dist
+    flush(4, 1, "M")
     equipR mind stone
     ?item.CanActivate()
       activate R
 
 
 func quarterstaff()
-  ?time <= 1 | !ai.paused
+  ?time <= 30 | ai.paused
     return
 
-  ?foe.distance > 20 &
-  ^item.GetCooldown("quarterstaff") = 0
+  ?foe.distance > 16 &
+  ^item.GetCooldown("quarterstaff") = 0 &
+  ^item.CanActivate(m)
+    flush(4, 1, "Q")
     equip quarterstaff
     ?item.CanActivate()
       activate R
@@ -62,9 +87,52 @@ func dash()
   ?foe.distance >= 11 &
   ^foe.distance <= 16
     ?item.GetCooldown("bash") <= 0
+      flush(4, 1, "B")
       equipR bashing shield
     :?item.GetCooldown("dash") <= 0
+      flush(4, 1, "D")
       equipR dashing shield
+
+
+// Frameskipping
+func aac(rightItem, leftItem)
+  ?foe.distance > 6
+    return
+
+  ?item.right.state = 3
+    flush(1, 1, "R")
+    equipR *10 +21 sword  // Trash stub
+    equipR @rightItem@
+
+  ?item.left.state = 3
+    flush(2, 1, "L")
+    equipL *10 +21 sword  // Trash stub
+    equipL @leftItem@
+
+
+func moondial(itemLeft, itemRight)
+  ?totaltime % 3 = 1
+    flush(1, 1, "R")
+    equipL moon
+    equipR @itemRight@
+
+  :?totaltime % 3 = 2
+    equipL moon
+    flush(1, 1, "L")
+    equipR @itemLeft@
+
+  :
+    flush(2, 1, "LR")
+    equipL @itemLeft@
+    equipR @itemRight@
+
+
+// Offensive abilities
+func hammer()
+  ?item.GetCooldown("hammer") <= 0 & item.CanActivate()
+    flush(3, 1, "H")
+    equip heavy hammer
+    activate R
 
 
 func blade()
@@ -74,6 +142,7 @@ func blade()
     bladeTimeout--
 
     ?bladeTimeout = 0
+      flush(3, 1, "B")
       equip blade
       activate R
       
@@ -81,43 +150,9 @@ func blade()
       bladeTimeout = 20
 
 
-func aac(rightItem, leftItem)
-  ?foe.distance > 6
-    return
-
-  ?item.right.state = 3
-    >`@screen.w - 1@,1,#f0f,R
-    equipR *10 +21 sword  // Trash stub
-    equipR @rightItem@
-
-  ?item.left.state = 3
-    >`@screen.w - 2@,1,#f0f,L
-    equipL *10 +21 wand  // Trash stub
-    equipL @leftItem@
-
-
-func moondial(itemLeft, itemRight)
-  ?totaltime % 3 = 1
-    equipL moon
-    equipR @itemRight@
-
-  :?totaltime % 3 = 2
-    equipL moon
-    equipR @itemLeft@
-
-  :
-    equipL @itemLeft@
-    equipR @itemRight@
-
-
-func hammer()
-  ?item.GetCooldown("hammer") <= 0 & item.CanActivate()
-    equip heavy hammer
-    activate R
-
-
 func bardiche()
   ?(item.GetCooldown("bardiche") = 0 | item.GetCooldown("bardiche") >= 875) &
   ^foe.distance <= 11
+    flush(3, 1, "R")
     equip bardiche shiny
     activate R

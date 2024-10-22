@@ -10,6 +10,7 @@ var wandLeft = "poison wand D +21 shiny"
 var wandRight = "poison wand D +21 -shiny"
 
 utils.walk(16)
+utils.aether()
 
 ?loc.begin
   brew stone + bronze
@@ -41,8 +42,7 @@ utils.walk(16)
     //   equipR fissure
     
     equip shovel
-    utils.dash()
-    // utils.mind(8)
+    utils.mind(5)
 
   ?foe = mushroom_boss
     ?foe.state = 32 & foe.time = 47
