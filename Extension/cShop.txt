@@ -1,0 +1,34 @@
+var icon = 0  // Enum
+var resource = 1
+
+var resources = [
+  ["o", res.stone],
+  ["/", res.wood],
+  ["≈", res.tar],
+  [":", res.bronze],
+  ["@", res.ki],
+  ["♦", res.crystals],
+  ["*", totalgp],
+]
+
+// Set up linear interpolation for floating window
+var t = -90
+var offset = 5
+
+?time >= 25 // stateElapsedTics * 2 + 1 (next frame)
+  t = math.Lerp(t, 0, 1.0/60.0 * 8)  // deltaTime * 8
+  box_x = math.CeilToInt(t) + offset
+
+// Box style and position
+var box_x = math.CeilToInt(t) + offset
+var box_y = 6
+var box_w = 14
+var box_h = resources.Count() + 2
+var box_color = "#555"
+var box_style = ui.AddStyle("┌─┐│ │└─┘")
+
+// Display all values
+draw.Box(box_x, box_y, box_w, box_h, box_color, box_style)
+
+for i = 0..resources.Count()-1
+  >`@box_x + 1@,@box_y + 1 + i@,#fff,@resources[i][icon]@ @resources[i][resource]@

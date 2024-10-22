@@ -9,11 +9,15 @@
   import c/Auto/Mine
 
 ?loc = Caves
-  import c/Caves
+  import c/Auto/Caves
+  // import c/Caves
+
+?loc = Halls
+  import c/Auto/Halls
 
 // Misc
 ?loc = Shop
-  import c/cExtension/cShop
+  import c/Extension/Shop
 
 ?item.right ! mask
   >o-1,1,└#┘
