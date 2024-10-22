@@ -32,16 +32,16 @@ var yep = 1
   swordtime = 0
   aether = 0
 
-// :?summon.GetId() ! "voidweaver" & foe ! boss & item.CanActivate() & item.GetCooldown("quarterstaff") > 0 & totaltime < 200
-//   equipR aether talisman
-//   equipL triskelion
-//   activate R
+:?summon.GetId() ! "voidweaver" & foe ! boss & item.CanActivate() & item.GetCooldown("quarterstaff") > 0 & totaltime < 200
+  equipR aether talisman
+  equipL triskelion
+  activate R
 
-// :?summon.GetId() ! "cinderwisp"
-// ^ & foe ! boss & item.CanActivate() & screen.i = 6
-//   equipR fire talisman
-//   equipL triskelion
-//   activate R
+:?summon.GetId() ! "cinderwisp"
+^ & foe ! boss & item.CanActivate() & screen.i = 6
+  equipR fire talisman
+  equipL triskelion
+  activate R
 
 :?foe ! boss
   ?foe.distance < 13 & item.GetCooldown("blade") <= 0 & buffs.GetCount("smite") = 0 & screen.i = 4
