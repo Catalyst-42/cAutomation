@@ -1,9 +1,7 @@
 // GUI elements
-disable hud arbu
-
-?loc.isQuest
-  enable banner
-  enable npcDialog
+?!loc.isQuest
+  disable hud arbu
+  disable npcDialog
 
 // Run info
 var x = 1
@@ -23,7 +21,7 @@ var loops = 0
   >`@x@,@y + 3@,#a9a9a9,∞#@loops@
 
 // AI states
-?false
+?true
   var aiStates = ""
   aiStates = ""
 
@@ -36,5 +34,26 @@ var loops = 0
   ?ai.walking 
     aiStates += "walking"
 
-  >`@x@,@y + 5@,#f0f,ai: @aiStates@
+  >`@x@,@y + 9@,#f0f,ai: @aiStates@
 
+// Time
+?true
+  >`@x@,@y + 4@,#f0f,@totaltime@
+
+// Positions
+?true
+  >`@x@,@y + 5@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
+  >`@x@,@y + 6@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
+
+// Foe
+?true
+  >`@x@,@y + 7@,#f0f,-: @foe.debuffs.string@, +: @foe.debuffs.string@, C:@foe.count@
+
+// Reloads
+?true
+  >`@x@,@y + 18@,#f0f,Bardiche: @item.GetCooldown("bardiche")@
+
+// Equips
+?true
+  >`@x@,@y + 22@,#f0f,L:@item.left.state@/@item.left.time@ @item.left@
+  >`@x@,@y + 23@,#f0f,R:@item.right.state@/@item.right.time@ @item.right@

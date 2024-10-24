@@ -19,7 +19,8 @@
   import c/Extension/Shop
 
 // GUI
-import c/Extension/GUI
+:
+  import c/Extension/GUI
 
 // Skins
 >o-1,1,└#┘

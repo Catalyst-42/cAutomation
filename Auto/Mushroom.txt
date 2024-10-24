@@ -10,7 +10,6 @@ var wandLeft = "poison wand D +21 shiny"
 var wandRight = "poison wand D +21 -shiny"
 
 utils.walk(16)
-utils.aether()
 
 ?loc.begin
   brew stone + bronze
@@ -23,7 +22,6 @@ utils.aether()
   :
     equipL @wandLeft@
     equipR @wandRight@
-
 
   ?foe = fluff
     // Farm fluff fissure

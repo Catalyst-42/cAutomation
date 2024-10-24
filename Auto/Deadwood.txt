@@ -17,15 +17,19 @@ utils.quarterstaff()
   brew stone + bronze
 
 ?foe.distance <= 20
-  ?foe ! boss
+  ?foe ! boss & foe ! wasp_nest & foe ! wasp
     ?totaltime % 5 <= 3
       equip skeleton arm
     :
       equipR hatchet
       equipL triskelion
+  
+  :?(foe = wasp_nest | foe = wasp) & foe.distance <= 9
+    equip bardiche
+    utils.bardiche()
 
-  ?foe = tree_boss
-    // ?foe.hp < 20
+  :?foe = tree_boss
+    // ?foe.hp < 30
     //   equipL talisman
     //   equipR hatchet
     // :

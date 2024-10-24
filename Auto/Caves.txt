@@ -20,7 +20,7 @@ var casualRight = "ice sword +21 -shiny -long"
   :?foe = spider_boss & foe.hp > 0
     ?foe.state = 142 & foe.time >= 59
       utils.mind(4)
-    :?foe.hp > 2586
+    :?foe.hp > 2586  // Bardiche +21/18
       activate potion
       utils.moondial(casualLeft, casualRight)
     :

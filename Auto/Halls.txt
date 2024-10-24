@@ -1,38 +1,52 @@
 var utils = import c/Utils
 
-var wandLeft = "vigor wand +21 dL shiny"
-var wandRight = "vigor wand +21 dL -shiny"
+var wandLeft = "vigor wand +21 D shiny"
+var wandRight = "vigor wand +21 D -shiny"
 
-var casualLeft = "vigor sword +21 D"
-var casualRight = "vigor sword +21 dL"
+var casualLeft =  "vigor sword +21 D  shiny -long"
+var casualRight = "vigor sword +21 D -shiny -long"
 
+var iceLeft =  "ice sword dI  shiny -long"
+var iceRight = "ice sword dI -shiny -long"
 
 ?loc.begin
   brew stone + bronze
 
 utils.walk(16)
 
-?foe.distance < 16
-  equipL @wandLeft@
-  equipR @wandRight@
+?totaltime > 10 & totaltime < 40
+  utils.aether()
 
-?foe ! immune_to_physical & foe.distance <= 8
-  utils.aac(casualLeft, casualRight)
+?screen.i = 1 &
+^foe.distance < 8
+  activate voidweaver
 
-?foe ! boss
-  utils.dash()
+?foe.distance < 12
+  ?screen.i = 1 & foe ! pallas
+    ?foe.count = 2
+      // utils.moondial(casualLeft, casualRight)
+      utils.bardiche()
+      // equip arm
+    :
+      equipL @wandLeft@
+      equipR @wandRight@
 
-?foe = pallas
-  ?foe.hp > 250
-    ?foe.count > 1 & foe = phase2
-      equip arm
+  ?foe = pallas
+    ?foe = phase2
+      ?foe.count > 1
+        equipL @wandLeft@
+        equipR @wandRight@
+      :?item.GetCooldown("bardiche") <= 0 |
+       ^item.GetCooldown("bardiche") >= 875
+        utils.bardiche()
+      :?foe.debuffs.GetCount("debuff_chill") < 6
+        utils.moondial(iceLeft, iceRight)
+      :
+        utils.moondial(casualLeft, casualRight)
     :
       activate potion
       utils.moondial(casualLeft, casualRight)
-  :
-    equipL moon
-    equipR crossbow
 
 utils.wait()
-utils.blade()
+utils.collect()
 utils.dash()
