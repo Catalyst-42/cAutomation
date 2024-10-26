@@ -5,32 +5,47 @@ utils.walk(16)
 var casualLeft = "ice sword +21  shiny -long"
 var casualRight = "ice sword +21 -shiny -long"
 
+var wandLeft = "ice wand +21 dI  shiny"
+var wandRight = "ice wand +21 dI -shiny"
+
 ?foe.distance <= 8
   ?foe ! boss
-    utils.moondial(casualLeft, casualRight)
+    equip arm
+    // equipL @wandLeft@
+    // equipR @wandRight@
+    // utils.moondial(casualLeft, casualRight)
 
   :?foe = cool_bat & foe.hp > 0
-    ?foe.debuffs.GetCount("stun") = 0 |
-    ^foe.debuffs.GetTime("stun") < 10
-      equipL moon
-      equipR ice hammer dI
-    :   
-      utils.moondial(casualLeft, casualRight)
+    ?foe.hp <= 6
+      equipL talisman
+      equipR xp
+    :
+      ?(foe.debuffs.GetCount("stun") = 0 |
+      ^foe.debuffs.GetTime("stun") < 11) &
+      ^foe.hp > 500
+        equipL moon
+        equipR ice hammer dI
+      :
+        utils.moondial(casualLeft, casualRight)
     
   :?foe = spider_boss & foe.hp > 0
     ?foe.state = 142 & foe.time >= 59
       utils.mind(4)
-    :?foe.hp > 2586  // Bardiche +21/18
+    :?foe.hp < 300
+      equip quarterstaff
+      activate R
+    :?foe.hp <= 2586  // Bardiche +21/18
+      utils.bardiche()
+    :
       activate potion
       utils.moondial(casualLeft, casualRight)
-    :
-      utils.bardiche()
 
-?screen.i = 2 &
-^foe.distance < 30 &
-^item.GetCooldown("blade") <= 0
-  equip blade
-  activate R
+// ?screen.i = 2 &
+// ^foe.distance < 15 &
+// ^item.GetCooldown("blade") <= 0
+//   equip blade
+//   activate R
+utils.blade()
 
 utils.dash()
 utils.quarterstaff()

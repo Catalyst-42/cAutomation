@@ -15,15 +15,17 @@ utils.walk(16)
   brew stone + bronze
 
 ?foe.distance <= 20
-  ?screen.i = 1
-    equip bardiche
-    ?foe.armor > 500
-      utils.bardiche()
-  :
-    equipL @wandLeft@
-    equipR @wandRight@
+  ?foe ! boss | foe.maxarmor > 600
+    ?screen.i = 1
+      equip bardiche
 
-  ?foe = fluff
+      ?foe.armor > 500
+        utils.bardiche()
+    :
+      equipL @wandLeft@
+      equipR @wandRight@
+
+  :?foe = fluff
     // Farm fluff fissure
     // activate potion
     // ?foe.hp > 232
@@ -42,16 +44,18 @@ utils.walk(16)
     equip shovel
     utils.mind(5)
 
-  ?foe = mushroom_boss
+  :?foe = mushroom_boss
     ?foe.state = 32 & foe.time = 47
       utils.mind(10)
 
-    ?foe.distance > 6
-      equipL @casualLeft@
-      equipR @casualRight@
-    :
-      activate potion
-      utils.moondial(casualLeft, casualRight)
+    ?foe = phase1
+      ?foe.debuffs.GetCount("debuff_armor_fatigue") = 0 &
+      ^item.GetCooldown("heavy_hammer") <= 0
+        activate potion
+        utils.hammer()
+      :
+        activate potion
+        utils.moondial(casualLeft, casualRight)
     // ?foe.hp > 100
     // :?foe.hp > 30
     //   equipL talisman
@@ -59,19 +63,18 @@ utils.walk(16)
     // :
     //   equipL talisman
     //   equipR fissure
-    
-    ?foe = mushroom_boss_fat
-      ?item.GetCooldown("bardiche") = 880
+    :
+      ?item.GetCooldown("bardiche") = 0 |
+      ^item.GetCooldown("bardiche") >= 875
         activate potion
-
-    ?foe = phase1 & 
-    ^foe.debuffs.GetCount("debuff_armor_fatigue") = 0
-      utils.hammer()
-
+        utils.bardiche()
+      :?foe.distance > 6
+        equipL @casualLeft@
+        equipR @casualRight@
+      :
+        utils.moondial(casualLeft, casualRight)
+    
     utils.dash()
-
-    ?foe = mushroom_boss_fat
-      activate potion
 
 // // Farm bashing attacks
 // ?loc.stars <= 15
@@ -81,9 +84,11 @@ utils.walk(16)
 //   :
 //     equip arm
 
-?screen.i > 1
-  utils.blade()
+// ?foe = epic_snail & foe.distance < 12 & foe.maxarmor > 300
+//   equip bardiche
 
+// ?screen.i > 1 
+// utils.blade()
 utils.collect()
 utils.quarterstaff()
 utils.wait()

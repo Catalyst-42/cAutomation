@@ -47,7 +47,7 @@ var loops = 0
 
 // Foe
 ?true
-  >`@x@,@y + 7@,#f0f,-: @foe.debuffs.string@, +: @foe.debuffs.string@, C:@foe.count@
+  >`@x@,@y + 7@,#f0f,-: @foe.debuffs.string@, +: @foe.buffs.string@, C:@foe.count@
 
 // Reloads
 ?true

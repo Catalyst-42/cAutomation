@@ -98,7 +98,8 @@ func dash()
 
 // Offensive abilities
 func hammer()
-  ?item.GetCooldown("hammer") <= 0 & item.CanActivate()
+  ?item.GetCooldown("heavy_hammer") <= 0 &
+  ^item.CanActivate()
     flush(3, 1, "H")
     equip heavy hammer
     activate R
@@ -126,7 +127,8 @@ func mask()
 
 
 func bardiche()
-  ?(item.GetCooldown("bardiche") = 0 | item.GetCooldown("bardiche") >= 875) &
+  ?(item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875) &
   ^foe.distance <= 11
     flush(3, 1, "R")
     equip bardiche shiny
@@ -150,17 +152,18 @@ func aac(rightItem, leftItem)
 
 
 func moondial(itemLeft, itemRight)
-  ?totaltime % 3 = 1
+  ?totaltime % 3 = 0
+    flush(2, 1, "LR")
+    equipL @itemLeft@
+    equipR @itemRight@
+  
+  :?totaltime % 3 = 1
     flush(1, 1, "R")
     equipL moon
     equipR @itemRight@
 
-  :?totaltime % 3 = 2
-    equipL moon
+  : // 2
     flush(1, 1, "L")
+    equipL moon
     equipR @itemLeft@
 
-  :
-    flush(2, 1, "LR")
-    equipL @itemLeft@
-    equipR @itemRight@
