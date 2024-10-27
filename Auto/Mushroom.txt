@@ -9,10 +9,8 @@ var iceWand = "ice wand +21 -shiny"
 var wandLeft = "poison wand D +21 shiny"
 var wandRight = "poison wand D +21 -shiny"
 
+utils.potion("lucky")
 utils.walk(16)
-
-?loc.begin
-  brew stone + bronze
 
 ?foe.distance <= 20
   ?foe ! boss | foe.maxarmor > 600
@@ -25,22 +23,7 @@ utils.walk(16)
       equipL @wandLeft@
       equipR @wandRight@
 
-  :?foe = fluff
-    // Farm fluff fissure
-    // activate potion
-    // ?foe.hp > 232
-    //   equipL @wandLeft@
-    //   equipR @wandRight@
-    // :?foe.hp > 88
-    //   equipL talisman
-    //   equipR @wandRight@
-    // :?foe.hp > 52
-    //   equipL ice wand i
-    //   equipR ice wand D
-    // :
-    //   equipL talisman
-    //   equipR fissure
-    
+  :?foe = fluff    
     equip shovel
     utils.mind(5)
 
@@ -56,13 +39,6 @@ utils.walk(16)
       :
         activate potion
         utils.moondial(casualLeft, casualRight)
-    // ?foe.hp > 100
-    // :?foe.hp > 30
-    //   equipL talisman
-    //   equipR sword +11 -long
-    // :
-    //   equipL talisman
-    //   equipR fissure
     :
       ?item.GetCooldown("bardiche") = 0 |
       ^item.GetCooldown("bardiche") >= 875
@@ -76,19 +52,6 @@ utils.walk(16)
     
     utils.dash()
 
-// // Farm bashing attacks
-// ?loc.stars <= 15
-//   ?foe.distance > 12
-//     equipL triskelion
-//     utils.dash()
-//   :
-//     equip arm
-
-// ?foe = epic_snail & foe.distance < 12 & foe.maxarmor > 300
-//   equip bardiche
-
-// ?screen.i > 1 
-// utils.blade()
 utils.collect()
 utils.quarterstaff()
 utils.wait()

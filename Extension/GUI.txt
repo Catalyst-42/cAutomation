@@ -3,26 +3,13 @@
   disable hud arbu
   disable npcDialog
 
-// Run info
+// Debug gui begin coodrinates
 var x = 1
 var y = 1
 
-var loops = 0
-
-?loc.loop
-  loops++
-
-// Display
->`@x@,@y@,#a9a9a9,↑#@loc.bestTime / 30@s
->`@x@,@y + 1@,#a9a9a9,=#@totaltime / 30@s
->`@x@,@y + 2@,#a9a9a9,≈#@loc.averageTime / 30@s
-
-?loops ! 0
-  >`@x@,@y + 3@,#a9a9a9,∞#@loops@
-
 // AI states
 ?true
-  var aiStates = ""
+  var aiStates
   aiStates = ""
 
   ?ai.enabled
@@ -38,22 +25,46 @@ var loops = 0
 
 // Time
 ?true
-  >`@x@,@y + 4@,#f0f,@totaltime@
+  >`@x@,@y + 4@,#f0f,T: @totaltime@t, @totaltime/30@s
+  >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
 
 // Positions
-?true
+?!true
   >`@x@,@y + 5@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
   >`@x@,@y + 6@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
 
 // Foe
 ?true
-  >`@x@,@y + 7@,#f0f,-: @foe.debuffs.string@, +: @foe.buffs.string@, C:@foe.count@
-
-// Reloads
-?true
-  >`@x@,@y + 18@,#f0f,Bardiche: @item.GetCooldown("bardiche")@
+  >`@x@,@y@,#f0f,C:@foe.count@ F:@foe.state@/@foe.time@ @foe@
+  >`@x@,@y + 1@,#f0f,-: @foe.debuffs.string@
+  >`@x@,@y + 2@,#f0f,+: @foe.buffs.string@
 
 // Equips
 ?true
+  >`@x@,@y + 21@,#f0f,P:@item.potion@
   >`@x@,@y + 22@,#f0f,L:@item.left.state@/@item.left.time@ @item.left@
   >`@x@,@y + 23@,#f0f,R:@item.right.state@/@item.right.time@ @item.right@
+
+
+// Reloads
+?true
+  var items
+  var icon = 0
+  var cooldown = 1
+
+  items = [
+    // ["=/", item.GetCooldown("blade")],
+    ["_)", item.GetCooldown("bardiche")],
+    [":>", item.GetCooldown("dash")],
+    [">>", item.GetCooldown("bash")],
+    // ["-·", item.GetCooldown("quarterstaff")],
+    ["<)", item.GetCooldown("mind")],
+    ["(}", item.GetCooldown("mask")],
+    // ["-≡", item.GetCooldown("skeleton_arm")],
+  ]
+
+  for i = 0..items.Count()-1
+    >`@x@,@y+i + 13@,#f0f,@items[i][icon]@ @items[i][cooldown]@
+
+?!true
+  import c/DPSMeter

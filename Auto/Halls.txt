@@ -9,9 +9,7 @@ var casualRight = "vigor sword +21 D -shiny -long"
 var iceLeft =  "ice sword dI  shiny -long"
 var iceRight = "ice sword dI -shiny -long"
 
-?loc.begin
-  brew stone + bronze
-
+utils.potion("lucky")
 utils.walk(16)
 
 ?totaltime > 10 & totaltime < 40
@@ -24,9 +22,7 @@ utils.walk(16)
 ?foe.distance < 12
   ?screen.i = 1 & foe ! pallas
     ?foe.count = 2
-      // utils.moondial(casualLeft, casualRight)
       utils.bardiche()
-      // equip arm
     :
       equipL @wandLeft@
       equipR @wandRight@

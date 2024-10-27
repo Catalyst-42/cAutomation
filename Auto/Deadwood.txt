@@ -3,38 +3,69 @@ var utils = import c/Utils
 var casualLeft =  "fire sword D +21  shiny -long"
 var casualRight = "fire sword D +21 -shiny -long"
 
+var iceLeft =  "ice sword +21 dI  shiny -long"
+var iceRight = "ice sword +21 dI -shiny -long"
+
 var longLeft =  "fire sword D +21  shiny long"
 var longRight = "fire sword D +21 -shiny long"
 
 var wandLeft =  "fire wand D +21  shiny"
 var wandRight = "fire wand D +21 -shiny"
 
+var aetherLeft =  "aether sword +21 dU  shiny -long"
+var aetherRight = "aether sword +21 dU -shiny -long"
 
+var dodged = 0
+
+utils.potion("lucky")
 utils.walk(16)
-utils.quarterstaff()
 
-?loc.begin
-  brew stone + bronze
+?totaltime > 10 & totaltime <= 30
+  utils.aether()
 
-?foe.distance <= 20
-  ?foe ! boss & foe ! wasp_nest & foe ! wasp
-    ?totaltime % 5 <= 3
-      equip skeleton arm
-    :
-      equipR hatchet
-      equipL triskelion
-  
-  :?(foe = wasp_nest | foe = wasp) & foe.distance <= 9
-    equip bardiche
-    utils.bardiche()
+?foe.distance <= 12
+  ?screen.i = 1 & foe.distance <= 6
+    activate voidweaver
+
+  :?foe ! boss
+    equipL @aetherLeft@
+    equipL @aetherRight@
 
   :?foe = tree_boss
-    // ?foe.hp < 30
-    //   equipL talisman
-    //   equipR hatchet
-    // :
-    utils.moondial(casualLeft, casualRight)
+    ?foe.state = 32 & foe.time > 72
+      utils.mind(4)
 
-utils.dash()
+    :?foe.debuffs.GetCount("chill") < 6
+      utils.moondial(iceLeft, iceRight)
+
+    :
+      activate potion
+      utils.moondial(casualLeft, casualRight)
+  
+:?foe = poena & !ai.paused
+  ?dodged = 0
+    ?foe.state = 32 & foe.time > 39
+      utils.mind(32)
+      dodged++
+    :
+      equip fire socketed crossbow
+  :
+    ?foe.distance <= 12
+      ?foe.hp > 8000  // 16*
+        utils.bardiche()
+      :
+        utils.moondial(casualLeft, casualRight)
+    :
+      equipL triskelion
+      equipR hatchet
+
+?foe = poena
+  utils.dash()
+:?screen.i = 1
+  utils.bash()
+
+// ?screen.i > 1
+//   utils.blade()
+
 utils.collect()
 utils.wait()

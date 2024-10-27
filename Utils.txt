@@ -1,16 +1,44 @@
 var bladeTimeout = 20
 
-
 func flush(x, y, sign)
   >`@screen.w - x@,@y@,#f0f,@sign@
+
+// Potions
+func potion(type)
+  ?!loc.begin
+    return
+  
+  ?type = "strength"
+    brew stone
+  :?type = "experience"
+    brew wood
+  :?type = "healing"
+    brew tar
+  :?type = "lightning"
+    brew bronze
+  :?type = "vampiric"
+    brew tar + bronze
+  :?type = "lucky"
+    brew stone + bronze
+  :?type = "berserk"
+    brew wood + bronze
+  :?type = "cleansing"
+    brew wood + tar
+  :?type = "defensive"
+    brew stone + tar
+  :?type = "invisibility"
+    brew wood + stone
 
 
 // Moveset
 func wait()
-  ?ai.paused
-    equipL quest
-    equipR compound shield N2X24
+  // ?ai.paused
+  //   equipL quest
+  //   equipR compound shield N2X24
 
+  ?ai.paused
+    equipL triskelion
+    equipR mask
 
 func collect()
   ?pickup & pickup.distance <= 16
@@ -18,10 +46,9 @@ func collect()
 
 
 func quarterstaff()
-  ?time <= 30 | ai.paused
-    return
-
-  ?foe.distance > 16 &
+  ?time >= 30 &
+  ^ai.paused &
+  ^foe.distance > 16 &
   ^item.GetCooldown("quarterstaff") = 0 &
   ^item.CanActivate()
     flush(4, 1, "Q")
@@ -88,6 +115,17 @@ func mind(dist)
 func dash()
   ?foe.distance >= 11 &
   ^foe.distance <= 16
+    ?item.GetCooldown("dash") <= 0
+      flush(4, 1, "D")
+      equipR dashing shield
+    :?item.GetCooldown("bash") <= 0
+      flush(4, 1, "B")
+      equipR bashing shield
+      
+
+func bash()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16
     ?item.GetCooldown("bash") <= 0
       flush(4, 1, "B")
       equipR bashing shield
@@ -121,7 +159,8 @@ func blade()
 
 
 func mask()
-  ?item.GetCooldown("mask") <= 0
+  ?item.GetCooldown("mask") <= 0 &
+  ^item.CanActivate()
     equipR mask
     activate R
 
@@ -136,7 +175,15 @@ func bardiche()
 
 
 // Frameskipping
-func aac(rightItem, leftItem)
+func arm()
+  ?totaltime % 5 = 0
+    equipR *0 +0 sword  // Trash stub
+    equipL triskelion
+  :
+    equip skeleton arm
+
+
+func aac(rightItem, leftItem)  // ? Useful ?
   ?foe.distance > 6
     return
 
@@ -166,4 +213,3 @@ func moondial(itemLeft, itemRight)
     flush(1, 1, "L")
     equipL moon
     equipR @itemLeft@
-

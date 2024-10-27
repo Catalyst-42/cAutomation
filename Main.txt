@@ -23,7 +23,7 @@
   import c/Extension/GUI
 
 // Skins
->o-1,1,└#┘
+>h-1,1,└#┘
 
 /* Games /
 ?loc = Waterfall
