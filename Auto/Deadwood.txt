@@ -16,6 +16,7 @@ var aetherLeft =  "aether sword +21 dU  shiny -long"
 var aetherRight = "aether sword +21 dU -shiny -long"
 
 var dodged = 0
+var lock = 0
 
 utils.potion("lucky")
 utils.walk(16)
@@ -23,49 +24,45 @@ utils.walk(16)
 ?totaltime > 10 & totaltime <= 30
   utils.aether()
 
-?foe.distance <= 12
+// ?screen.i = 1 & foe.count = 0
+//   lock = totaltime
+
+// ?totaltime - lock > 10 & totaltime - lock <= 30 & lock ! 0
+//   utils.fire()
+
+?foe.distance <= 12 | foe = poena
   ?screen.i = 1 & foe.distance <= 6
     activate voidweaver
 
   :?foe ! boss
-    equipL @aetherLeft@
-    equipL @aetherRight@
+    equip heavy hammer
 
   :?foe = tree_boss
     ?foe.state = 32 & foe.time > 72
       utils.mind(4)
-
     :?foe.debuffs.GetCount("chill") < 6
       utils.moondial(iceLeft, iceRight)
-
     :
       activate potion
       utils.moondial(casualLeft, casualRight)
-  
-:?foe = poena & !ai.paused
-  ?dodged = 0
+    
+  :?foe = poena & !ai.paused
     ?foe.state = 32 & foe.time > 39
-      utils.mind(32)
       dodged++
-    :
+      utils.mind(32)
+    :?dodged = 0
       equip fire socketed crossbow
-  :
-    ?foe.distance <= 12
-      ?foe.hp > 8000  // 16*
-        utils.bardiche()
-      :
-        utils.moondial(casualLeft, casualRight)
-    :
+    :?foe.distance > 12
       equipL triskelion
       equipR hatchet
+    :
+      utils.bardiche()
 
 ?foe = poena
   utils.dash()
-:?screen.i = 1
-  utils.bash()
 
-// ?screen.i > 1
-//   utils.blade()
+:?foe = tree_boss | screen.i = 1
+  utils.bash()
 
 utils.collect()
 utils.wait()

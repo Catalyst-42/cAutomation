@@ -23,7 +23,16 @@
   import c/Extension/GUI
 
 // Skins
->h-1,1,└#┘
+var hat = ascii
+#λ
+‾Ö‾
+asciiend
+
+?!bighead
+  >h-1,0,#666,@hat@
+  >h0,1,Ö
+
+  // >h-1,1,└#┘
 
 /* Games /
 ?loc = Waterfall

@@ -38,10 +38,7 @@ utils.walk(16)
     
   :?foe = spider_boss & foe.hp > 0
     ?foe.state = 142 & foe.time >= 59
-      ?item.GetCooldown("mind") <= 0
-        utils.mind(4)
-      :
-        utils.fissure(4)
+      utils.mind(4)
     :?foe.debuffs.GetCount("chill") < 6
       utils.moondial(casualLeft, casualRight)
     :?foe.hp >= foe.maxhp - 500
@@ -51,7 +48,7 @@ utils.walk(16)
     
 ?screen.i > 2
   utils.blade()
-:?foe.distance < 16
+:?foe.distance <= 12
   activate voidweaver
 
 ?foe.hp < 500 | foe = boss

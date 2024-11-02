@@ -3,6 +3,7 @@ var bladeTimeout = 20
 func flush(x, y, sign)
   >`@screen.w - x@,@y@,#f0f,@sign@
 
+
 // Potions
 func potion(type)
   ?!loc.begin
@@ -40,6 +41,7 @@ func wait()
     equipL triskelion
     equipR mask
 
+
 func collect()
   ?pickup & pickup.distance <= 16
     equipR star
@@ -47,7 +49,7 @@ func collect()
 
 func quarterstaff()
   ?time >= 30 &
-  ^ai.paused &
+  ^!ai.paused &
   ^foe.distance > 16 &
   ^item.GetCooldown("quarterstaff") = 0 &
   ^item.CanActivate()
@@ -61,10 +63,10 @@ func walk(dist)
   ?foe.distance <= dist
     return
   
-  ?hp ! maxhp 
-    equipL ouroboros
-  :
-    equipL triskelion
+  // ?hp ! maxhp 
+  //   equipL ouroboros
+  // :
+  equipL triskelion
   
   ?foe.distance > 20 & foe.distance < 25
     ?foe = poison

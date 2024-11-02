@@ -13,7 +13,7 @@ utils.potion("lucky")
 utils.walk(16)
 
 ?foe.distance <= 20
-  ?foe ! boss | foe.maxarmor > 600
+  ?foe ! boss | foe.maxarmor > 400 & foe.maxarmor < 700
     ?screen.i = 1
       equip bardiche
 
@@ -31,7 +31,7 @@ utils.walk(16)
     ?foe.state = 32 & foe.time = 47
       utils.mind(10)
 
-    ?foe = phase1
+    :?foe = phase1
       ?foe.debuffs.GetCount("debuff_armor_fatigue") = 0 &
       ^item.GetCooldown("heavy_hammer") <= 0
         activate potion
