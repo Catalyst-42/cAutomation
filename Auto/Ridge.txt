@@ -1,0 +1,14 @@
+var utils = import c/Utils
+
+utils.potion("lucky")
+utils.walk(16)
+
+?foe.distance < 10
+  equipL fire sword -shiny -long
+  
+  ?armor < 10
+    equipR aether shield
+  :
+    equipR fire sword  shiny -long
+
+utils.bash()

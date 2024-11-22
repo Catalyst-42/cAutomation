@@ -7,8 +7,18 @@
 var x = 1
 var y = 1
 
+var debug
+debug = [
+  "ai",
+  "time",
+  "positions",
+  "foe",
+  "equips",
+  "reloads",
+]
+
 // AI states
-?true
+?debug.Contains("ai")
   var aiStates
   aiStates = ""
 
@@ -21,50 +31,52 @@ var y = 1
   ?ai.walking 
     aiStates += "walking"
 
-  >`@x@,@y + 9@,#f0f,ai: @aiStates@
+  >`@x@,@y + 8@,#f0f,ai: @aiStates@
 
 // Time
-?true
-  >`@x@,@y + 4@,#f0f,T: @totaltime@t, @totaltime/30@s
+var loops = 0
+
+?loc.loop
+  loops++
+
+?debug.Contains("time")
+  >`@x@,@y + 4@,#f0f,T: @totaltime@t, @totaltime/30@s, ∞:@loops@
   >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
 
 // Positions
-?!true
+?debug.Contains("positions")
   >`@x@,@y + 5@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
   >`@x@,@y + 6@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
 
 // Foe
-?true
+?debug.Contains("foe")
   >`@x@,@y@,#f0f,C:@foe.count@ F:@foe.state@/@foe.time@ @foe@
   >`@x@,@y + 1@,#f0f,-: @foe.debuffs.string@
   >`@x@,@y + 2@,#f0f,+: @foe.buffs.string@
 
 // Equips
-?true
+?debug.Contains("equips")
   >`@x@,@y + 21@,#f0f,P:@item.potion@
   >`@x@,@y + 22@,#f0f,L:@item.left.state@/@item.left.time@ @item.left@
   >`@x@,@y + 23@,#f0f,R:@item.right.state@/@item.right.time@ @item.right@
 
-
 // Reloads
-?true
+?debug.Contains("reloads")
   var items
   var icon = 0
   var cooldown = 1
 
   items = [
-    // ["=/", item.GetCooldown("blade")],
+    ["=/", item.GetCooldown("blade")],
     ["_)", item.GetCooldown("bardiche")],
-    [":>", item.GetCooldown("dash")],
+    ["(>", item.GetCooldown("dash")],
     [">>", item.GetCooldown("bash")],
-    // ["-·", item.GetCooldown("quarterstaff")],
+    ["-·", item.GetCooldown("quarterstaff")],
     ["<)", item.GetCooldown("mind")],
     ["(}", item.GetCooldown("mask")],
-    // ["-≡", item.GetCooldown("skeleton_arm")],
+    ["-[", item.GetCooldown("heavy_hammer")],
+    ["-≡", item.GetCooldown("skeleton_arm")],
   ]
 
   for i = 0..items.Count()-1
-    >`@x@,@y+i + 13@,#f0f,@items[i][icon]@ @items[i][cooldown]@
-
-?!true
-  import c/DPSMeter
+    >`@x@,@y+i + 11@,#f0f,@items[i][icon]@ @items[i][cooldown]@

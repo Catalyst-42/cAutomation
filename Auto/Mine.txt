@@ -1,11 +1,57 @@
 var utils = import c/Utils
 
-utils.walk(16)
-utils.quarterstaff()
-utils.dash()
+utils.potion("lucky")
 
-?foe.distance < 8
+var swordL = "aether sword +21 -long -shiny"
+var swordR = "aether sword +21 -long  shiny"
+
+var autoC = "aether socketed crossbow"
+
+?foe ! bronze_guardian
+  utils.walk(16)
+:
+  utils.wait()
+
+?totaltime > 10 & totaltime < 40
+  utils.aether()
+
+:?foe ! boss
+  utils.quarterstaff()
+  utils.collect()
+  utils.blade()
+
+?foe.distance < 9 & foe ! boss
+  ?!utils.aacL("aether sword -long")
     equipL aether sword -long
-    equipR aether shield
+  equipR aether shield
 
-utils.collect()
+:?foe = bronze_guardian
+  ?foe.debuffs.GetCount("debuff_armor_fatigue") = 0
+    utils.hammer()
+  
+  :?foe.distance = 3 &
+  ^(item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875)
+    activate potion
+    utils.bardiche()
+  
+  :?foe.state = 33 & foe.time < 195
+    ?foe.distance = 3
+      utils.moondial(swordL, swordR)
+    :
+      equipL triskelion
+      equipR mask
+      
+      utils.mask()
+
+  :
+    ?foe.state = 32 & foe.time > 20
+      activate potion
+
+    utils.aacR(autoC)
+
+:?foe = bomb_cart & foe.distance < 23
+  utils.aacR(autoC)
+
+?foe ! bomb_cart
+  utils.bash()

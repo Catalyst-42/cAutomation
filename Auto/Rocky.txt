@@ -1,0 +1,14 @@
+var utils = import c/Utils
+
+utils.walk(16)
+utils.quarterstaff()
+// utils.dash()
+
+?foe.distance < 20
+  utils.aacR("arm")
+
+utils.collect()
+
+// repeating crossbow
+// heavy hammer
+// arm

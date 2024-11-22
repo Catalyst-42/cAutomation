@@ -1,7 +1,7 @@
 var bladeTimeout = 20
 
 func flush(x, y, sign)
-  >`@screen.w - x@,@y@,#f0f,@sign@
+  >`@screen.w - x@,@y@,#00f,@sign@
 
 
 // Potions
@@ -33,13 +33,15 @@ func potion(type)
 
 // Moveset
 func wait()
-  // ?ai.paused
-  //   equipL quest
-  //   equipR compound shield N2X24
-
   ?ai.paused
-    equipL triskelion
-    equipR mask
+    flush(4, 1, "-")
+
+    equipL quest
+    equipR compound shield N2X24
+
+  // ?ai.paused
+  //   equipL triskelion
+  //   equipR mask
 
 
 func collect()
@@ -63,6 +65,8 @@ func walk(dist)
   ?foe.distance <= dist
     return
   
+  flush(4, 1, "+")
+
   // ?hp ! maxhp 
   //   equipL ouroboros
   // :
@@ -141,7 +145,7 @@ func hammer()
   ?item.GetCooldown("heavy_hammer") <= 0 &
   ^item.CanActivate()
     flush(3, 1, "H")
-    equip heavy hammer
+    equip heavy hammer shiny
     activate R
 
 
@@ -198,6 +202,27 @@ func aac(rightItem, leftItem)  // ? Useful ?
     flush(2, 1, "L")
     equipL *0 +0 sword  // Trash stub
     equipL @leftItem@
+
+
+func aacR(rightItem)  // ? Useful ?
+  equip @rightItem@
+  
+  ?item.right.state = 3
+    flush(1, 1, "R")
+    equipR *0 +0 sword  // Trash stub
+    equip @rightItem@
+
+
+func aacL(rightItem)  // ? Useful ?
+  equip @rightItem@
+  
+  ?item.right.state = 3
+    flush(2, 1, "L")
+    equipL *0 +0 sword  // Trash stub
+    equipL @rightItem@
+    return true
+  :
+    return false
 
 
 func moondial(itemLeft, itemRight)

@@ -17,6 +17,8 @@ utils.walk(16)
 
 ?totaltime > 10 & totaltime <= 30
   utils.aether()
+:
+  utils.quarterstaff()
 
 ?foe.distance <= 8
   ?foe ! boss
@@ -32,7 +34,7 @@ utils.walk(16)
     ^foe.debuffs.GetTime("stun") < 11) &
     ^foe.hp > 500
       equipL ice hammer dI
-      equipR mask
+      equipR @aetherRight@m
     :
       utils.moondial(casualLeft, casualRight)
     
@@ -44,7 +46,8 @@ utils.walk(16)
     :?foe.hp >= foe.maxhp - 500
       utils.bardiche()
     :
-      utils.moondial()
+      // utils.aacR("arm")
+      utils.moondial(casualLeft, casualRight)
     
 ?screen.i > 2
   utils.blade()
@@ -54,6 +57,5 @@ utils.walk(16)
 ?foe.hp < 500 | foe = boss
   utils.dash()
 
-utils.quarterstaff()
 utils.wait()
 utils.collect()
