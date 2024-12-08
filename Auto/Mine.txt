@@ -34,14 +34,14 @@ var autoC = "aether socketed crossbow"
   ^item.GetCooldown("bardiche") >= 875)
     activate potion
     utils.bardiche()
-  
+
   :?foe.state = 33 & foe.time < 195
     ?foe.distance = 3
       utils.moondial(swordL, swordR)
     :
       equipL triskelion
       equipR mask
-      
+
       utils.mask()
 
   :

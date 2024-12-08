@@ -11,7 +11,7 @@ var debug
 debug = [
   "ai",
   "time",
-  "positions",
+  // "positions",
   "foe",
   "equips",
   "reloads",
@@ -45,8 +45,8 @@ var loops = 0
 
 // Positions
 ?debug.Contains("positions")
-  >`@x@,@y + 5@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
-  >`@x@,@y + 6@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
+  >`@x@,@y + 6@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
+  >`@x@,@y + 7@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
 
 // Foe
 ?debug.Contains("foe")

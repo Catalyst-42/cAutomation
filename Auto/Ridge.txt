@@ -3,12 +3,48 @@ var utils = import c/Utils
 utils.potion("lucky")
 utils.walk(16)
 
-?foe.distance < 10
-  equipL fire sword -shiny -long
-  
-  ?armor < 10
-    equipR aether shield
-  :
-    equipR fire sword  shiny -long
+var swordL = "aether sword -shiny -long"
+var swordR = "aether sword  shiny -long"
 
-utils.bash()
+var casualLeft =  "ice sword +21 dI  shiny -long"
+var casualRight = "ice sword +21 dI -shiny -long"
+
+?totaltime > 10 & totaltime < 40
+  utils.fire()
+
+:?foe ! boss
+  utils.quarterstaff()
+  utils.collect()
+  utils.blade()
+
+  ?foe.distance < 15 & foe ! boss
+    ?foe = ice_pillar & foe.distance < 5
+      utils.moondial(swordL, swordR)
+    :
+      equip aether crossbow
+
+:?foe = giant_ice_elemental & foe.distance < 11
+  utils.bardiche()
+
+:?foe = yeti
+  ?foe.armor > 0
+    utils.moondial(swordL, swordR)
+
+  :?![132, 133, 33, 32].Contains(foe.state)
+    equipL triskelion
+    equipR compound shield
+
+  :
+    ?foe.hp < 50
+      equipL grappling
+      equipR compound shield
+
+    :?foe.debuffs.GetCount("chill") < 6
+      activate potion
+      utils.moondial(casualLeft, casualRight)
+
+    :?foe.distance <= 5
+      utils.moondial(swordL, swordR)
+
+?foe ! yeti | (foe = yeti & (foe.state = 132 | foe.armor > 0))
+  utils.bash()
