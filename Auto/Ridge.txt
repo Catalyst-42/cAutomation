@@ -6,6 +6,12 @@ utils.walk(16)
 var swordL = "aether sword -shiny -long"
 var swordR = "aether sword  shiny -long"
 
+var fireL = "fire sword -shiny D -long"
+var fireR = "fire sword  shiny D -long"
+
+var longL = "aether sword -shiny long"
+var longR = "aether sword  shiny long"
+
 var casualLeft =  "ice sword +21 dI  shiny -long"
 var casualRight = "ice sword +21 dI -shiny -long"
 
@@ -24,7 +30,11 @@ var casualRight = "ice sword +21 dI -shiny -long"
       equip aether crossbow
 
 :?foe = giant_ice_elemental & foe.distance < 11
-  utils.bardiche()
+  ?item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875
+    utils.bardiche()
+  :
+    utils.moondial(fireL, fireR)
 
 :?foe = yeti
   ?foe.armor > 0
@@ -35,16 +45,15 @@ var casualRight = "ice sword +21 dI -shiny -long"
     equipR compound shield
 
   :
-    ?foe.hp < 50
-      equipL grappling
-      equipR compound shield
-
-    :?foe.debuffs.GetCount("chill") < 6
+    ?foe.debuffs.GetCount("chill") < 6
       activate potion
       utils.moondial(casualLeft, casualRight)
 
     :?foe.distance <= 5
-      utils.moondial(swordL, swordR)
+      utils.moondial(fireL, fireR)
+    
+    :
+      utils.moondial(longL, longR)
 
-?foe ! yeti | (foe = yeti & (foe.state = 132 | foe.armor > 0))
+?foe ! yeti | (foe = yeti & ([132, 133, 32, 33].Contains(foe.state) | foe.armor > 0))
   utils.bash()

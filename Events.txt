@@ -1,0 +1,17 @@
+// Farm hp task
+utils.potion("healing")
+
+var t = false
+?hp < 15
+  activate potion
+  t = true  
+
+var out = 0
+?t
+  out++
+
+?out > 15
+  loc.Leave()
+
+?foe.distance < 10
+  equipR ouroboros

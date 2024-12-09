@@ -1,6 +1,6 @@
 var utils = import c/Utils
 
-var casualLeft =  "poison sword D +21  mshiny -long"
+var casualLeft =  "poison sword D +21  shiny -long"
 var casualRight = "poison sword D +21 -shiny -long"
 
 var iceWand = "ice wand +21  shiny"
