@@ -1,0 +1,64 @@
+var utils = import c/Utils
+
+utils.potion("lucky")
+utils.walk(16)
+
+var swordL = "aether sword -shiny -long"
+var swordR = "aether sword  shiny -long"
+
+var fireL = "fire sword -shiny D -long"
+var fireR = "fire sword  shiny D -long"
+
+var longL = "aether sword -shiny long"
+var longR = "aether sword  shiny long"
+
+var casualLeft =  "ice sword +21 dI  shiny -long"
+var casualRight = "ice sword +21 dI -shiny -long"
+
+var hotL =  "ice sword +21 D  shiny -long"
+var hotR = "ice sword +21 D -shiny -long"
+
+?totaltime > 10 & totaltime < 40
+  utils.aether()
+
+:?foe ! boss
+  utils.quarterstaff()
+  utils.collect()
+  utils.blade()
+
+  ?foe.distance <= 16
+    utils.aacR("socketed ice srossbow")
+
+    // ?item.right ! sword
+    //   equipL @swordL@
+    //   equipR @swordR@
+    // :
+    //   utils.aac(swordL, swordR)
+
+:?foe = acronian_cultist
+  ?item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875
+    utils.bardiche()
+
+  :?foe.debuffs.GetCount("chill") < 6
+    utils.moondial(casualLeft, casualRight)
+
+  :
+    utils.moondial(hotL, hotR)
+
+:?foe = nagaraja & foe.distance < 12
+  ?foe.state = 133 & foe.time = 32
+    utils.mind()
+
+  :?(item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875) & foe.hp > 2000
+    activate potion
+    utils.bardiche()
+
+  :?foe.debuffs.GetCount("chill") < 6
+    utils.moondial(casualLeft, casualRight)
+
+  :
+    utils.moondial(hotL, hotR)
+
+utils.bash()

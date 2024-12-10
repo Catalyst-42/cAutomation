@@ -13,8 +13,8 @@ debug = [
   "time",
   // "positions",
   "foe",
-  "equips",
   "reloads",
+  // "equips",
 ]
 
 // AI states
@@ -50,7 +50,21 @@ var loops = 0
 
 // Foe
 ?debug.Contains("foe")
-  >`@x@,@y@,#f0f,C:@foe.count@ F:@foe.state@/@foe.time@ @foe@
+  var element
+  ?foe = poison
+    element = "∞"
+  :?foe = vigor
+    element = "❤"
+  :?foe = aether
+    element = "*"
+  :?foe = fire
+    element = "φ"
+  :?foe = ice
+    element = "❄"
+  :
+    element = "o"
+
+  >`@x@,@y@,#f0f,D: @foe.distance@, C:@foe.count@ F:@foe.state@/@foe.time@ @element@ @foe@
   >`@x@,@y + 1@,#f0f,-: @foe.debuffs.string@
   >`@x@,@y + 2@,#f0f,+: @foe.buffs.string@
 

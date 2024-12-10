@@ -28,8 +28,8 @@
 ?loc = Ridge
   import c/Auto/Ridge
 
-// ?loc = Temple
-//   import c/Auto/Temple
+?loc = Temple
+  import c/Auto/Temple
 
 // Skins
 var hat = ascii

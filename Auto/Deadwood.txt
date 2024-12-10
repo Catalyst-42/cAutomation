@@ -6,6 +6,9 @@ var casualRight = "fire sword D +21 -shiny -long"
 var iceLeft =  "ice sword +21 dI  shiny -long"
 var iceRight = "ice sword +21 dI -shiny -long"
 
+var fireL =  "fire sword +21 dI  shiny -long"
+var fireR = "fire sword +21 dI -shiny -long"
+
 var longLeft =  "fire sword D +21  shiny long"
 var longRight = "fire sword D +21 -shiny long"
 
@@ -17,6 +20,8 @@ var aetherRight = "aether sword +21 dU -shiny -long"
 
 var dodged = 0
 var lock = 0
+
+// TODO: I fucked up something but I don't know what, Poena RIPs me
 
 utils.potion("berserk")
 utils.walk(16)
@@ -43,21 +48,27 @@ utils.walk(16)
     //   utils.mind(4)
     ?foe.debuffs.GetCount("feeble") = 0
       utils.mask()
+
     :?foe.debuffs.GetCount("chill") < 6
+
       activate potion
       utils.moondial(iceLeft, iceRight)
+
     :
-      utils.aacR("aether socketed crossbow")
+      utils.moondial(fireL, fireR)
 
   :?foe = poena & !ai.paused
     ?foe.state = 32 & foe.time > 39
       dodged++
       utils.mind(32)
+
     :?dodged = 0
-      equip fire socketed crossbow
+      utils.aacR("fire socketed crossbow")
+
     :?foe.distance > 12
       equipL triskelion
       equipR hatchet
+
     :
       utils.bardiche()
 

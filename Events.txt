@@ -15,3 +15,12 @@ var out = 0
 
 ?foe.distance < 10
   equipR ouroboros
+
+
+// Farm foe kill with stone
+?foe.hp < 18
+  equipL xi
+
+:?foe.hp < 200
+  equipL sword -long
+  equipR mask

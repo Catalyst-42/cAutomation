@@ -148,7 +148,7 @@ func blade()
     screen.next()
     bladeTimeout--
 
-    ?bladeTimeout = 0
+    ?bladeTimeout = 0 | loc.stars = 16
       flush(3, 1, "B")
       equip blade
       activate R

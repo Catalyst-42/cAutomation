@@ -1,14 +1,68 @@
 var utils = import c/Utils
 
 utils.walk(16)
-utils.quarterstaff()
-// utils.dash()
 
-?foe.distance < 20
-  utils.aacR("arm")
+var poisonL = "poison sword +21 dP  shiny -long"
+var poisonR = "poison sword +21 dP -shiny -long"
 
-utils.collect()
+var vigorL = "vigor sword +21 D  shiny -long"
+var vigorR = "vigor sword +21 D -shiny -long"
 
-// repeating crossbow
-// heavy hammer
-// arm
+var aetherL = "aether sword +21 dU  shiny -long"
+var aetherR = "aether sword +21 D  -shiny -long"
+
+var fireL = "fire sword +21 D  shiny -long"
+var fireR = "fire sword +21 D -shiny -long"
+
+var iceL = "ice sword +21 dI  shiny -long"
+var iceR = "ice sword +21 dI -shiny -long"
+
+var iceLD = "ice sword +21 D  shiny -long"
+var iceRD = "ice sword +21 D -shiny -long"
+
+?totaltime > 10 & totaltime < 40
+  utils.aether()
+
+:?foe ! boss
+  utils.quarterstaff()
+  utils.collect()
+
+?foe = acronian_scout & foe.distance < 8
+  ?foe.debuffs.GetCount("chill") < 6
+    utils.moondial(iceL, iceR)
+  :
+    utils.aacR("arm")
+
+:?foe = dysangelos_bearer & foe.distance < 8
+  ?item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875
+    utils.bardiche()
+  :
+    utils.moondial(iceL, iceR)
+
+:?foe = dysangelos_elementalist & foe.distance < 8
+  ?foe = poison
+    utils.moondial(iceL, iceR)
+  :?foe = vigor
+    utils.moondial(poisonL, poisonR)
+  :?foe = aether
+    utils.moondial(vigorL, vigorR)
+  :?foe = fire
+    utils.moondial(aetherL, aetherR)
+  :?foe = ice
+    utils.moondial(fireL, fireR)
+
+:?foe = dysangelos_perfected & foe.distance < 8
+  // ?foe.debuffs.GetCount("feeble") = 0
+  //   activate potion
+  //   utils.mask()
+  ?item.GetCooldown("bardiche") = 0 |
+  ^item.GetCooldown("bardiche") >= 875
+    utils.bardiche()
+  :?foe.debuffs.GetCount("chill") < 6
+    utils.moondial(iceL, iceR)
+  :
+    utils.moondial(fireL, fireR)
+
+utils.dash()
+utils.wait()
