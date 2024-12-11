@@ -9,10 +9,10 @@ var y = 1
 
 var debug
 debug = [
+  "foe",
   "ai",
   "time",
   // "positions",
-  "foe",
   "reloads",
   // "equips",
 ]
@@ -40,7 +40,7 @@ var loops = 0
   loops++
 
 ?debug.Contains("time")
-  >`@x@,@y + 4@,#f0f,T: @totaltime@t, @totaltime/30@s, ∞:@loops@
+  >`@x@,@y + 4@,#f0f,T: @totaltime@f, @totaltime/30@s, ∞:@loops@
   >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
 
 // Positions

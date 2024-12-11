@@ -18,6 +18,11 @@ var casualRight = "ice sword +21 dI -shiny -long"
 var hotL =  "ice sword +21 D  shiny -long"
 var hotR = "ice sword +21 D -shiny -long"
 
+var minds = 0
+
+?loc.loop
+  minds = 0
+
 ?totaltime > 10 & totaltime < 40
   utils.aether()
 
@@ -46,13 +51,19 @@ var hotR = "ice sword +21 D -shiny -long"
   :
     utils.moondial(hotL, hotR)
 
+:?foe = nagaraja & minds = 1
+  utils.aacR("socketed ice srossbow")
+
 :?foe = nagaraja & foe.distance < 12
-  ?foe.state = 133 & foe.time = 32
-    utils.mind()
+  ?item.right = bardiche & 
+  ^item.GetCooldown("bardiche") <= 880
+    activate potion
+
+  ?foe.state = 112 & foe.time = 59 
+    utils.mind(4)
 
   :?(item.GetCooldown("bardiche") = 0 |
-  ^item.GetCooldown("bardiche") >= 875) & foe.hp > 2000
-    activate potion
+  ^item.GetCooldown("bardiche") >= 875)
     utils.bardiche()
 
   :?foe.debuffs.GetCount("chill") < 6
@@ -61,4 +72,8 @@ var hotR = "ice sword +21 D -shiny -long"
   :
     utils.moondial(hotL, hotR)
 
+?foe = nagaraja & foe.state = 112 & foe.time = 59 
+  minds++
+
 utils.bash()
+utils.wait()

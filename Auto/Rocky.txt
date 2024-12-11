@@ -14,6 +14,9 @@ var aetherR = "aether sword +21 D  -shiny -long"
 var fireL = "fire sword +21 D  shiny -long"
 var fireR = "fire sword +21 D -shiny -long"
 
+var fireLdF = "fire sword +21 dF  shiny -long"
+var fireRdF = "fire sword +21 dF -shiny -long"
+
 var iceL = "ice sword +21 dI  shiny -long"
 var iceR = "ice sword +21 dI -shiny -long"
 
@@ -27,7 +30,10 @@ var iceRD = "ice sword +21 D -shiny -long"
   utils.quarterstaff()
   utils.collect()
 
-?foe = acronian_scout & foe.distance < 8
+?foe = acronian_soldier
+  utils.aacR("repeating crossbow")
+
+:?foe = acronian_scout & foe.distance < 8
   ?foe.debuffs.GetCount("chill") < 6
     utils.moondial(iceL, iceR)
   :
