@@ -10,6 +10,7 @@ TODO:
 - Done all locations at 20*
 - Make perfect time for all locations
 - Make normal README file
+- Add request for `sys.SetFileUrl` to add directory name
 - Make @standardcombo to add while loops in game
 - Ask @standardcombo about ANTLR grammar
 - Make normal syntax lexer/parser for game

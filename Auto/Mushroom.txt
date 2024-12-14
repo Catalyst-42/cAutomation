@@ -12,6 +12,11 @@ var wandRight = "poison wand D +21 -shiny"
 utils.potion("lucky")
 utils.walk(16)
 
+?totaltime > 10 & totaltime < 40
+  utils.aether()
+:
+  utils.quarterstaff()
+
 ?foe.distance <= 20
   ?foe ! boss | foe.maxarmor > 400 & foe.maxarmor < 700
     ?screen.i = 1
@@ -53,5 +58,4 @@ utils.walk(16)
     utils.dash()
 
 utils.collect()
-utils.quarterstaff()
 utils.wait()

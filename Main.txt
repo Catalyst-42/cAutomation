@@ -1,8 +1,6 @@
 // Misc
 ?loc = Shop
   import c/Extension/Shop
-
-// GUI
 :
   import c/Extension/GUI
 
@@ -10,30 +8,30 @@
 ?loc = Rocky
   import c/Auto/Rocky
 
-?loc = Deadwood
+:?loc = Deadwood
   import c/Auto/Deadwood
 
-?loc = Caves
+:?loc = Caves
   import c/Auto/Caves
 
-?loc = Mushroom
+:?loc = Mushroom
   import c/Auto/Mushroom
 
-?loc = Halls
+:?loc = Halls
   import c/Auto/Halls
 
-?loc = Mine
+:?loc = Mine
   import c/Auto/Mine
 
-?loc = Ridge
+:?loc = Ridge
   import c/Auto/Ridge
 
-?loc = Temple
+:?loc = Temple
   import c/Auto/Temple
 
 // Skins
 var hat = ascii
-#λ
+#λ#
 ‾Ö‾
 asciiend
 
@@ -43,14 +41,12 @@ asciiend
 
   // >h-1,1,└#┘
 
-/* Games /
-?loc = Waterfall
+// Games
+// ?loc = Waterfall
   // Tetris
   // import c/Games/Tetris/cTetris
   // import c/Games/Tetris/cColorTetris
 
   // Gomoku
   // import c/Games/Gomoku/cGomoku
-
-// */
 

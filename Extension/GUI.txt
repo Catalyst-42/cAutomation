@@ -33,24 +33,10 @@ debug = [
 
   >`@x@,@y + 8@,#f0f,ai: @aiStates@
 
-// Time
-var loops = 0
-
-?loc.loop
-  loops++
-
-?debug.Contains("time")
-  >`@x@,@y + 4@,#f0f,T: @totaltime@f, @totaltime/30@s, ∞:@loops@
-  >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
-
-// Positions
-?debug.Contains("positions")
-  >`@x@,@y + 6@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
-  >`@x@,@y + 7@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
-
 // Foe
 ?debug.Contains("foe")
   var element
+
   ?foe = poison
     element = "∞"
   :?foe = vigor
@@ -67,6 +53,20 @@ var loops = 0
   >`@x@,@y@,#f0f,D: @foe.distance@, C:@foe.count@ F:@foe.state@/@foe.time@ @element@ @foe@
   >`@x@,@y + 1@,#f0f,-: @foe.debuffs.string@
   >`@x@,@y + 2@,#f0f,+: @foe.buffs.string@
+
+// Time
+var loops = 0
+?loc.loop
+  loops++
+
+?debug.Contains("time")
+  >`@x@,@y + 4@,#f0f,T: @totaltime@f, @totaltime/30@s, ∞:@loops@
+  >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
+
+// Positions
+?debug.Contains("positions")
+  >`@x@,@y + 6@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
+  >`@x@,@y + 7@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
 
 // Equips
 ?debug.Contains("equips")
@@ -86,7 +86,7 @@ var loops = 0
     ["(>", item.GetCooldown("dash")],
     [">>", item.GetCooldown("bash")],
     ["-·", item.GetCooldown("quarterstaff")],
-    ["<)", item.GetCooldown("mind")],
+    ["<<", item.GetCooldown("mind")],
     ["(}", item.GetCooldown("mask")],
     ["-[", item.GetCooldown("heavy_hammer")],
     ["-≡", item.GetCooldown("skeleton_arm")],

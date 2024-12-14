@@ -28,7 +28,9 @@ func potion(type)
     brew stone + tar
   :?type = "invisibility"
     brew wood + stone
-
+  :
+    ui.ShowBanner("Wrong potion type!")
+    loc.Leave()
 
 // Moveset
 func wait()
@@ -216,14 +218,14 @@ func aacR(rightItem)
 
 func aacL(leftItem)
   equip @leftItem@
-  
+
   ?item.right.state = 3
     flush(2, 1, "L")
     equipL *0 +0 sword  // Trash stub
     equipL @leftItem@
     return true
-  :
-    return false
+
+  return false
 
 
 func moondial(itemLeft, itemRight)

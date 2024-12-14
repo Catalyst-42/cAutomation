@@ -57,3 +57,5 @@ var casualRight = "ice sword +21 dI -shiny -long"
 
 ?foe ! yeti | (foe = yeti & ([132, 133, 32, 33].Contains(foe.state) | foe.armor > 0))
   utils.bash()
+
+utils.wait()

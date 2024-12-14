@@ -23,12 +23,13 @@ var autoC = "aether socketed crossbow"
 ?foe.distance < 9 & foe ! boss
   ?!utils.aacL("aether sword -long")
     equipL aether sword -long
+
   equipR aether shield
 
 :?foe = bronze_guardian
   ?foe.debuffs.GetCount("debuff_armor_fatigue") = 0
     utils.hammer()
-  
+
   :?foe.distance = 3 &
   ^(item.GetCooldown("bardiche") = 0 |
   ^item.GetCooldown("bardiche") >= 875)

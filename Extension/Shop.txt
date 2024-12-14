@@ -15,7 +15,7 @@ var resources = [
 var t = -90
 var offset = 5
 
-?time >= 25 // stateElapsedTics * 2 + 1 (next frame)
+?time >= 25  // stateElapsedTics * 2 + 1 (next frame)
   t = math.Lerp(t, 0, 1.0/60.0 * 8)  // deltaTime * 8
   box_x = math.CeilToInt(t) + offset
 

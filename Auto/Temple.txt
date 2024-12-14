@@ -32,7 +32,7 @@ var minds = 0
   utils.blade()
 
   ?foe.distance <= 16
-    utils.aacR("socketed ice srossbow")
+    utils.aacR("socketed ice srossbow dI")
 
     // ?item.right ! sword
     //   equipL @swordL@
@@ -58,7 +58,7 @@ var minds = 0
   ?item.right = bardiche & 
   ^item.GetCooldown("bardiche") <= 880
     activate potion
-
+  
   ?foe.state = 112 & foe.time = 59 
     utils.mind(4)
 

@@ -1,6 +1,9 @@
 // Farm hp task
 utils.potion("healing")
 
+equipL triskelion
+equipR mask
+
 var t = false
 ?hp < 15
   activate potion
@@ -20,7 +23,14 @@ var out = 0
 // Farm foe kill with stone
 ?foe.hp < 18
   equipL xi
+  equipR mask
 
 :?foe.hp < 200
   equipL sword -long
   equipR mask
+
+
+// Farm mask attacks
+utils.dash()
+?foe.distance < 12
+  utils.mask()
