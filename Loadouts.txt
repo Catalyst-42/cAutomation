@@ -1,0 +1,24 @@
+P oison
+V igor
+A ether
+F ire
+I ce
+S tone
+
+L eft
+R ight
+T wo handed
+
+longswordPoisonL = 
+swordLPdI
+
+compound
+Longsword
+Sword
+Wand
+Crossbow
+Staff
+Shield
+
+lPoisonSword = 
+rVigorWandDI = 

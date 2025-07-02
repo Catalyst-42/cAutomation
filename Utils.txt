@@ -141,6 +141,70 @@ func bash()
       equipR dashing shield
 
 
+// Special Wands
+func explode()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 4 &
+  ^item.GetCooldown("wand_fire") <= 0
+    equipR wand_hidden_fire
+    activate R
+
+
+func reset()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 11 &
+  ^item.GetCooldown("wand_aether") <= 0
+    equipR wand_hidden_aether
+    activate R
+
+
+func icing()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 3 &
+  ^item.GetCooldown("wand_ice") <= 0
+    equipR wand_hidden_ice
+    activate R
+
+
+func plague()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 6 &
+  ^item.GetCooldown("wand_poison") <= 0
+    equipR wand_hidden_poison
+    activate R
+
+
+func cleansing()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 1 &
+  ^item.GetCooldown("wand_vigor") <= 0
+    equipR wand_hidden_vigor
+    activate R
+
+
+func gravity()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 0 &
+  ^item.GetCooldown("wand_stone") <= 0
+    equipR wand_hidden_stone
+    activate R
+
+
+func icing()
+  ?foe.distance >= 11 &
+  ^foe.distance <= 16 &
+  ^armor >= 3 &
+  ^item.GetCooldown("wand_ice") <= 0
+    equipR wand_hidden_ice
+    activate R
+
+
 // Offensive abilities
 var bladeTimeout = 20
 
@@ -160,7 +224,8 @@ func blade()
 
 
 func hammer()
-  ?item.GetCooldown("heavy_hammer") <= 0 &
+  ?(item.GetCooldown("heavy_hammer") <= 0 |
+  ^item.GetCooldown("heavy_hammer") >= 644) &
   ^item.CanActivate()
     flush(3, 1, "H")
     equip heavy hammer shiny

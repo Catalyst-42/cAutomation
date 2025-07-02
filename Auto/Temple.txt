@@ -28,7 +28,6 @@ var minds = 0
 
 :?foe ! boss
   utils.quarterstaff()
-  utils.collect()
   utils.blade()
 
   ?foe.distance <= 16
@@ -77,3 +76,4 @@ var minds = 0
 
 utils.bash()
 utils.wait()
+utils.collect()

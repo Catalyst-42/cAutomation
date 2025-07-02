@@ -6,8 +6,8 @@ var casualRight = "fire sword D +21 -shiny -long"
 var iceLeft =  "ice sword +21 dI  shiny -long"
 var iceRight = "ice sword +21 dI -shiny -long"
 
-var fireL =  "fire sword +21 dI  shiny -long"
-var fireR = "fire sword +21 dI -shiny -long"
+var fireL =  "fire sword +21 dF  shiny -long"
+var fireR = "fire sword +21 dF -shiny -long"
 
 var longLeft =  "fire sword D +21  shiny long"
 var longRight = "fire sword D +21 -shiny long"
@@ -44,13 +44,18 @@ utils.walk(16)
     utils.aacR("heavy hammer")
 
   :?foe = tree_boss
+    utils.blade()
+
     // ?foe.state = 32 & foe.time > 72
     //   utils.mind(4)
-    ?foe.debuffs.GetCount("feeble") = 0
+
+    ?foe.distance > 3 & foe.distance < 8
+      equip shovel
+
+    :?foe.debuffs.GetCount("feeble") = 0
       utils.mask()
 
     :?foe.debuffs.GetCount("chill") < 6
-
       activate potion
       utils.moondial(iceLeft, iceRight)
 
@@ -76,8 +81,10 @@ utils.walk(16)
   utils.dash()
 
 ?foe = poena
-  utils.flush(20, 10, "!!!")
   utils.bardiche()
+
+  ?foe.distance <= 3
+    equip bardiche
 
 :?foe = tree_boss | screen.i = 1
   utils.bash()

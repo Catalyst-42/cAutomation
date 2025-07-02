@@ -29,18 +29,6 @@
 :?loc = Temple
   import c/Auto/Temple
 
-// Skins
-var hat = ascii
-#λ#
-‾Ö‾
-asciiend
-
-?!bighead
-  >h-1,0,#666,@hat@
-  >h0,1,O
-
-  // >h-1,1,└#┘
-
 // Games
 // ?loc = Waterfall
   // Tetris
@@ -49,4 +37,3 @@ asciiend
 
   // Gomoku
   // import c/Games/Gomoku/cGomoku
-

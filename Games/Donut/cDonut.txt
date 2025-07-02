@@ -1,0 +1,118 @@
+/* cDonut.txt 
+ * -> Created by Catalyst
+ * -> v0.0.0 (Too laggy update)
+ * -> import cDonut
+ * 
+ * Tried to create spinning donut, 
+ * but got an fps bomb. Change
+ * editable sections variables
+ * carefully.
+ *
+ */
+
+// Editable
+var thetaSpacing = 0.35
+var phiSpacing = 0.1
+
+var alphaSpeed = 0.04
+var betaSpeed = 0.08
+
+var frameSize  = screen.h 
+
+// Non editable
+var R1 = 1
+var R2 = 2
+var K2 = 5
+
+var K1 = frameSize*K2*3/(8*(R1+R2))
+
+var alpha = 1.0
+var beta = 1.0
+
+func RenderFrame()
+  var cosA = math.Cos(alpha)
+  var sinA = math.Sin(alpha)
+  var cosB = math.Cos(beta)
+  var sinB = math.Sin(beta)
+
+  var charOutput = []
+  var zbuffer = []
+
+  for i = 0..frameSize
+    var line = []
+    var zline = []
+    for j = 0..frameSize
+      line.Add(" ")
+      zline.Add(0)
+    charOutput.Add(line)
+    zbuffer.Add(zline)
+
+  // Trace torus
+  var theta = 0.0
+  for i = 0..1984  // Simulating while loop
+    theta += thetaSpacing
+    ?theta > 2*math.pi
+        break
+    
+    var costheta = math.Cos(theta)
+    var sintheta = math.Sin(theta)
+
+    var phi = 0.0
+    for j = 0..1984  // Simulating while loop
+      phi += phiSpacing
+      ?phi > 2*math.pi
+          break
+      
+      var cosphi = math.Cos(phi)
+      var sinphi = math.Sin(phi)
+
+      var circlex = R2 + R1*costheta
+      var circley = R1*sintheta
+
+      var x = circlex*(cosB*cosphi + sinA*sinB*sinphi) - circley*cosA*sinB
+      var y = circlex*(sinB*cosphi - sinA*cosB*sinphi) + circley*cosA*cosB
+      var z = K2 + cosA*circlex*sinphi + circley*sinA
+      var ooz = 1/z
+      
+      var xp = math.FloorToInt(frameSize/2 + K1*ooz*x)
+      var yp = math.FloorToInt(frameSize/2 - K1*ooz*y)
+
+      var L = (
+        ^cosphi*costheta*sinB - cosA*costheta*sinphi - sinA*sintheta +
+        ^cosB*(cosA*sintheta - costheta*sinA*sinphi))
+
+      ?L > 0 & ooz > zbuffer[xp][yp]
+        zbuffer[xp][yp] = ooz
+        var luminance_index = math.Clamp(math.FloorToInt(L*8), 0, 11)
+
+        charOutput[xp][yp] = string.Sub(".,-~:;=!*#$@", luminance_index, 1)            
+  
+  // Print result frame
+  var line = ""
+  for i = 0..frameSize-1
+    line = ""
+    for j = 0..frameSize-1
+      line += charOutput[i][j]
+
+    >`@(screen.w - frameSize)/2@,@(screen.h - frameSize)/2 + i@,#white,@line@
+
+?loc.begin
+  disable banner
+  disable hud
+  disable pause
+  disable player
+  disable abilities
+  disable loadout input
+  disable loadout print
+
+  ambient.Stop()
+  music.Stop()
+
+func main()
+  beta += betaSpeed 
+  alpha += alphaSpeed 
+
+  draw.Clear()
+  RenderFrame()
+
+main()

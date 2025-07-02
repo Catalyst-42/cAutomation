@@ -18,16 +18,16 @@ utils.walk(16)
   utils.quarterstaff()
 
 ?foe.distance <= 20
-  ?foe ! boss | foe.maxarmor > 400 & foe.maxarmor < 700
-    ?screen.i = 1
+  ?foe ! boss | foe.maxarmor >= 400 & foe.maxarmor < 700
+    ?screen.i = 1 & loc.stars > 16 | foe = epic_snail & foe.maxarmor > 300
       equip bardiche
 
-      ?foe.armor > 500
+      ?foe.armor >= 400
         utils.bardiche()
     :
       equipL @wandLeft@
       equipR @wandRight@
-
+  
   :?foe = fluff    
     equip shovel
     utils.mind(5)
@@ -38,7 +38,8 @@ utils.walk(16)
 
     :?foe = phase1
       ?foe.debuffs.GetCount("debuff_armor_fatigue") = 0 &
-      ^item.GetCooldown("heavy_hammer") <= 0
+      ^(item.GetCooldown("heavy_hammer") <= 0 |
+      ^item.GetCooldown("heavy_hammer") >= 644)
         activate potion
         utils.hammer()
       :
@@ -56,6 +57,9 @@ utils.walk(16)
         utils.moondial(casualLeft, casualRight)
     
     utils.dash()
+
+?loc.stars < 16
+  utils.blade()
 
 utils.collect()
 utils.wait()

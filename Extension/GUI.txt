@@ -9,12 +9,14 @@ var y = 1
 
 var debug
 debug = [
-  "foe",
-  "ai",
+  // "foe",
+  // "ai",
   "time",
   // "positions",
   "reloads",
+  // "resources",
   // "equips",
+  "events",
 ]
 
 // AI states
@@ -31,7 +33,7 @@ debug = [
   ?ai.walking 
     aiStates += "walking"
 
-  >`@x@,@y + 8@,#f0f,ai: @aiStates@
+  >`@x@,@y + 9@,#f0f,ai: @aiStates@
 
 // Foe
 ?debug.Contains("foe")
@@ -61,12 +63,12 @@ var loops = 0
 
 ?debug.Contains("time")
   >`@x@,@y + 4@,#f0f,T: @totaltime@f, @totaltime/30@s, ∞:@loops@
-  >`@x@,@y + 5@,#f0f,B: @loc.bestTime@t, A:@loc.averageTime@t
+  >`@x@,@y + 5@,#f0f,B: @loc.bestTime@f, A:@loc.averageTime@f
 
 // Positions
 ?debug.Contains("positions")
-  >`@x@,@y + 6@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
-  >`@x@,@y + 7@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
+  >`@x@,@y + 7@,#f0f,X: @pos.x@, Y: @pos.y@, Z: @pos.z@
+  >`@x@,@y + 8@,#f0f,i: @screen.i@, @screen.w@ x @screen.h@
 
 // Equips
 ?debug.Contains("equips")
@@ -86,11 +88,48 @@ var loops = 0
     ["(>", item.GetCooldown("dash")],
     [">>", item.GetCooldown("bash")],
     ["-·", item.GetCooldown("quarterstaff")],
-    ["<<", item.GetCooldown("mind")],
+    // ["<<", item.GetCooldown("mind")],
     ["(}", item.GetCooldown("mask")],
     ["-[", item.GetCooldown("heavy_hammer")],
-    ["-≡", item.GetCooldown("skeleton_arm")],
+    // ["-≡", item.GetCooldown("skeleton_arm")],
+    // ["", ""],  // Kinda separator
+    // ["∞", item.GetCooldown("wand_poison")],
+    // ["*", item.GetCooldown("wand_aether")],
+    // ["♥", item.GetCooldown("wand_vigor")],
+    // ["φ", item.GetCooldown("wand_fire")],
+    // ["❄", item.GetCooldown("wand_ice")],
+    // ["o", item.GetCooldown("wand_stone")],
   ]
 
   for i = 0..items.Count()-1
     >`@x@,@y+i + 11@,#f0f,@items[i][icon]@ @items[i][cooldown]@
+
+// Resources
+?debug.Contains("resources")
+  var resources
+  var icon = 0
+  var value = 1
+
+  resources = [
+    ["o", res.stone],
+    ["/", res.wood],
+    ["≈", res.tar],
+    [":", res.bronze],
+    ["@", res.ki],
+    ["♦", res.crystals],
+    // ["", ""],  // Kinda separator
+    // ["σ█", item.GetCount("mug")],
+    // ["/°", item.GetCount("candy")],
+    // ["/´", item.GetCount("torch_lv1")],
+    // ["c<", item.GetCount("balloon")],
+  ]
+
+  for i = 0..resources.Count()-1
+    >`@x + 8@,@y+i + 11@,#f0f,@resources[i][icon]@ @resources[i][value]@
+
+// Events
+?debug.Contains("events")
+  for i = 0..2
+    >`@x@,@y + i + 21@,#f0f,
+    ^@event.GetObjectiveProgress(i)@/@event.GetObjectiveGoal(i)@ 
+    ^@event.GetObjectiveId(i)@

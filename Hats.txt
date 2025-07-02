@@ -1,0 +1,10 @@
+var hat = ascii
+#λ#
+‾Ö‾
+asciiend
+
+?!bighead
+  >h-1,0,#666,@hat@
+  >h0,1,O
+
+  // >h-1,1,└#┘

@@ -97,7 +97,7 @@ func coutField()
       for x = 0..W-1
         ?string.Sub(field[y], x, 1) = figure_glyph_a
           >`@game_x+x*2+1@,@game_y+y@,@colors[field_colors[y*W+x]]@,@figure_glyph_a@@figure_glyph_b@
-          
+
   >`@game_x@,@game_y+H@,#white,@lower_border@
 
   // next figure
@@ -113,9 +113,9 @@ func coutField()
         render_line += figure_glyph_a + figure_glyph_b
       :
         render_line += "  "
-      
+
     >`@gui_x@,@gui_y + 4 + y@,@colors[figure_next_color]@,@render_line@
-  
+
   ?sys.isPC | sys.isConsole
     ?is_game_ended
       >`@gui_x@,@gui_y + H - 5@,#yellow,game is ended
@@ -125,7 +125,7 @@ func coutField()
     >`@gui_x@,@gui_y + H - 3@,#666,[A], [D] - move
     >`@gui_x@,@gui_y + H - 2@,#666,[C] - rotate
     >`@gui_x@,@gui_y + H - 1@,#666,[X] - exit
-  
+
   // draw buttons for phones
   ?sys.isMobile
     var pivot_x = 0
@@ -134,7 +134,7 @@ func coutField()
     for i = 0..5
       ?!is_game_ended & i = button_restart
         continue
-  
+
       draw.Box(buttons[i][x], buttons[i][y], buttons[i][w], buttons[i][h], #white)
 
       pivot_x = buttons[i][x] + (buttons[i][w] - string.Size(buttons[i][icon])) / 2
@@ -147,7 +147,7 @@ func coutField()
   >`@gui_x@,@gui_y + 11@,#yellow,figure: @figure@, next: @figure_next@
   >`@gui_x@,@gui_y + 12@,#yellow,totaltime: @totaltime@, 
   >`@gui_x@,@gui_y + 13@,#yellow,ticks: @ticks@, upd: @(30 - score/100)@
-  
+
   ?totaltime % 2 = 0
     >`@gui_x@,@gui_y + 14@,#yellow,█
   // */
@@ -176,7 +176,7 @@ func setMaxXY()
   // x normalization, especially when rotating
   ?figure_x < figure_min_x
     figure_x = figure_min_x
-  
+
   ?figure_x > figure_max_x
     figure_x = figure_max_x
 
@@ -184,7 +184,7 @@ func rotate()
   var figure_heap = figure
   var figure_x_heap = figure_x
   var figure_y_heap = figure_y
-  
+
   //               O  I     S     Z     L            J               T
   var rotations = [0, 2, 1, 4, 3, 6, 5, 10, 7, 8, 9, 14, 11, 12, 13, 18, 15, 16, 17]
   figure = rotations[figure]
@@ -208,7 +208,7 @@ func move(move_direction)
     for x = 0..3
       ?string.Sub(figures[figure], x+y*4, 1) = "@" & (string.Sub(field[figure_y+y], figure_x+x+move_direction, 1) = figure_glyph_a)
         return
-      
+
   figure_x += move_direction
 
 func checkCollision()
@@ -220,28 +220,28 @@ func checkCollision()
       ?string.Sub(figures[figure], x+y*4, 1) = "@" & (figure_y+y = H-1 | string.Sub(field[figure_y+y+1], figure_x+x, 1) = figure_glyph_a)
         clip = true
         play pickup_bronze
-      
+
         break
-  
+
   ?!clip
     return
-  
+
   for y = 3..0
     for x = 0..3
       // place figure
       ?string.Sub(figures[figure], x+y*4, 1) = "@"
         field[figure_y+y] = string.Sub(field[figure_y+y], 0, figure_x+x) + figure_glyph_a + string.Sub(field[figure_y+y], figure_x+x+1)
         field_colors[figure_y*W + y*W + figure_x + x] = figure_color
-  
+
   for y = 3..0
     for x = 0..3
       // if new figure can't be spawned
       ?string.Sub(figures[figure_next], x+y*4, 1) = "@" & string.Sub(field[y], W/2 - 2+x, 1) = figure_glyph_a
         is_game_ended = true
         play uulaa_voice
-        
+
         break
-  
+
   figure_x = W/2 - 2
   figure_y = -1
 
@@ -262,13 +262,13 @@ func checkLines()
       score += 10
       lines++
       field[y] = clear_line
-      
+
       for yy = y-1..0
         for x = 0..W-1
           field_colors[(yy+1)*W + x] = field_colors[yy*W + x]
-        
+
         field[yy+1] = field[yy]
-      
+
       return
 
 func init()
@@ -304,7 +304,7 @@ func init()
     clear_line += " "
     full_line += figure_glyph_a
     lower_border += "--"
-  
+
   // generate field
   for y = 0..H-1
     field.Add(clear_line)
@@ -334,17 +334,17 @@ func gameLoop()
 
     ?key = leftBegin | buttons[button_left][is_pressed] // A
       move(-1)
-    
+
     ?key = rightBegin | buttons[button_right][is_pressed] // D
       move(1)
 
   :?key = bumpLEnd | buttons[button_restart][is_pressed] // Z
     is_game_ended = false
-    
+
     score = 0
     ticks = 0
     lines = 0
-    
+
     field.Clear()
     field_colors.Clear()
 
@@ -357,7 +357,7 @@ func gameLoop()
   // update board
   draw.Clear()
   coutField()
-  
+
   ?!is_game_ended
     setFigure()
 
