@@ -9,12 +9,12 @@ var y = 1
 
 var debug
 debug = [
-  // "foe",
-  // "ai",
+  "foe",
+  "ai",
   "time",
   // "positions",
   "reloads",
-  // "resources",
+  "resources",
   // "equips",
   "events",
 ]
@@ -117,10 +117,10 @@ var loops = 0
     [":", res.bronze],
     ["@", res.ki],
     ["♦", res.crystals],
-    // ["", ""],  // Kinda separator
+    ["", ""],  // Kinda separator
     // ["σ█", item.GetCount("mug")],
     // ["/°", item.GetCount("candy")],
-    // ["/´", item.GetCount("torch_lv1")],
+    ["/´", item.GetCount("torch_lv1")],
     // ["c<", item.GetCount("balloon")],
   ]
 

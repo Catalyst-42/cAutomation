@@ -7,7 +7,7 @@ func flush(x, y, sign)
 func potion(type)
   ?!loc.begin
     return
-  
+
   ?type = "strength"
     brew stone
   :?type = "experience"

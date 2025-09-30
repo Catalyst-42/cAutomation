@@ -17,8 +17,8 @@ var ticks = 0
 var W = 10     // field width
 var H = 20 + 1 // field height
 
-var figure_glyph_a = "[" // any ascii symbol
-var figure_glyph_b = "]" // [] () {} ██
+var figure_glyph_a = "█" // any ascii symbol
+var figure_glyph_b = "█" // [] () {} ██
 
 var game_x = screen.w/2 - (W*2 + 18)/2
 var game_y = screen.h/2 - H/2

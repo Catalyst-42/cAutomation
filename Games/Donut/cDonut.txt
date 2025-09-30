@@ -1,23 +1,23 @@
 /* cDonut.txt 
  * -> Created by Catalyst
- * -> v0.0.0 (Too laggy update)
+ * -> v1.0.0 (Too laggy update)
  * -> import cDonut
  * 
  * Tried to create spinning donut, 
  * but got an fps bomb. Change
- * editable sections variables
+ * editable section variables
  * carefully.
  *
  */
 
-// Editable
+// Editable (beware of lags!)
 var thetaSpacing = 0.35
 var phiSpacing = 0.1
 
 var alphaSpeed = 0.04
 var betaSpeed = 0.08
 
-var frameSize  = screen.h 
+var frameSize  = screen.h
 
 // Non editable
 var R1 = 1
@@ -53,7 +53,7 @@ func RenderFrame()
     theta += thetaSpacing
     ?theta > 2*math.pi
         break
-    
+
     var costheta = math.Cos(theta)
     var sintheta = math.Sin(theta)
 
@@ -62,7 +62,7 @@ func RenderFrame()
       phi += phiSpacing
       ?phi > 2*math.pi
           break
-      
+
       var cosphi = math.Cos(phi)
       var sinphi = math.Sin(phi)
 
@@ -73,7 +73,7 @@ func RenderFrame()
       var y = circlex*(sinB*cosphi - sinA*cosB*sinphi) + circley*cosA*cosB
       var z = K2 + cosA*circlex*sinphi + circley*sinA
       var ooz = 1/z
-      
+
       var xp = math.FloorToInt(frameSize/2 + K1*ooz*x)
       var yp = math.FloorToInt(frameSize/2 - K1*ooz*y)
 
@@ -85,16 +85,19 @@ func RenderFrame()
         zbuffer[xp][yp] = ooz
         var luminance_index = math.Clamp(math.FloorToInt(L*8), 0, 11)
 
-        charOutput[xp][yp] = string.Sub(".,-~:;=!*#$@", luminance_index, 1)            
+        charOutput[xp][yp] = string.Sub(".,-~:;=!*#$@", luminance_index, 1)
   
   // Print result frame
   var line = ""
   for i = 0..frameSize-1
     line = ""
-    for j = 0..frameSize-1
-      line += charOutput[i][j]
+    line += string.Join("", charOutput[i])
 
     >`@(screen.w - frameSize)/2@,@(screen.h - frameSize)/2 + i@,#white,@line@
+    
+func Controls()
+  ?key = primaryBegin & totaltime > 30
+    loc.Leave()
 
 ?loc.begin
   disable banner
@@ -114,5 +117,6 @@ func main()
 
   draw.Clear()
   RenderFrame()
+  Controls()
 
 main()

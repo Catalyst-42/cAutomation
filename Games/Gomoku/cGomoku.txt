@@ -97,7 +97,7 @@ func initField(value)
     for x = 0..fieldSize - 1
       line.Add(value)
     field.Add(line)
-  
+
   return field
 
 func gui()
@@ -118,7 +118,7 @@ func gui()
   ?sys.isPC | sys.isConsole
     >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy + fieldSize - 2@,@backgroundColor@,[C] - new game
     >`@dx + fieldSize*2 + 1 - halfLineMode@,@dy + fieldSize - 1@,@backgroundColor@,[X] - exit
-  
+
   ?sys.isMobile
     // Mobile cursor
     ?halfLineMode
@@ -159,7 +159,7 @@ func cout()
         charMark = botMark
 
       >`@dx + x*2@,@dy + y@,@charColor@,@charMark@
-  
+
 func blink()
   var dt = totaltime - blinkTime
 
@@ -181,7 +181,7 @@ func inputs()
     ?cursorPos[x] > 0
       ?buttons[buttonLeft][isPressed]
         cursorPos[x] -= 1
-      
+
       ?buttons[buttonUpLeft][isPressed] & cursorPos[x] > 0
         cursorPos[x] -= 1
         cursorPos[y] -= 1
@@ -209,7 +209,7 @@ func inputs()
 
     ?buttons[buttonDown][isPressed] & cursorPos[y] < fieldSize - 1
       cursorPos[y] += 1
-  
+
   ?key = bumpRBegin | buttons[buttonRestart][isPressed]  // C
     restartGame()
 
@@ -231,7 +231,7 @@ func turns()
   ?turn % 2 = 1
     var turnPos = playerInput()
     var playerSign = userSq
-    
+
     ?!turnPos  // No input
       return
 
@@ -251,7 +251,7 @@ func turns()
   var y = turnPos[1]
 
   f[y][x] = playerSign
-  
+
   // Check game state
   ?isDraw
     gameState = "draw"
@@ -297,7 +297,7 @@ func botInput()
   var nMax = 0
   var xMax = [0, 0, 0, 0, 0, 0, 0, 0]
   var yMax = [0, 0, 0, 0, 0, 0, 0, 0]
-  
+
   var maxS = evaluatePos(s, userSq)
   var maxQ = evaluatePos(q, machSq)
 
@@ -341,7 +341,7 @@ func evaluatePos(a, mySq)
   var maxA = -1
 
   isDraw = true
-  for y = 0..fieldSize - 1 
+  for y = 0..fieldSize - 1
     for x = 0..fieldSize - 1
       ?f[y][x] ! 0
         a[y][x] = -1
@@ -359,23 +359,23 @@ func evaluatePos(a, mySq)
         var minM = y - 4
         ?minM < 0
           minM = 0
-        
+
         var minN = x - 4
         ?minN < 0
           minN = 0
-        
+
         var maxM = y + 5
         ?maxM > fieldSize
           maxM = fieldSize
-        
+
         var maxN = x + 5
         ?maxN > fieldSize
           maxN = fieldSize
-        
+
         nPos[1] = 1
         var A1 = 0
         var m = 1
-        
+
         for _ = 0..1984  // Waiting for a while loops...
           ?!(x + m < maxN & f[y][x + m] ! -mySq)
             break
@@ -387,7 +387,7 @@ func evaluatePos(a, mySq)
         ?x + m >= fieldSize | f[y][x + m] = -mySq
           ?f[y][x + m - 1] = mySq
             A1 -= w[5] * mySq
-          
+
         m = 1
         for _ = 0..1984  // Waiting for a while loops...
           ?!(x - m >= minN & f[y][x - m] ! -mySq)
@@ -395,12 +395,12 @@ func evaluatePos(a, mySq)
 
           nPos[1] += 1
           A1 += w[m] * f[y][x - m]
-          m++ 
+          m++
 
         ?x - m < 0 | f[y][x - m] = -mySq
           ?f[y][x - m + 1] = mySq
             A1 -= w[5] * mySq
-        
+
         ?nPos[1] > 4
           isDraw = false
 
@@ -425,7 +425,7 @@ func evaluatePos(a, mySq)
           nPos[2] += 1
           A2 += w[m] * f[y - m][x]
           m++
-        
+
         ?y - m < 0 | f[y - m][x] = -mySq
           ?f[y - m + 1][x] = mySq
             A2 -= w[5] * mySq
@@ -442,11 +442,11 @@ func evaluatePos(a, mySq)
           nPos[3] += 1
           A3 += w[m] * f[y + m][x + m]
           m++
-        
+
         ?(y + m >= fieldSize | x + m >= fieldSize | f[y + m][x + m] = -mySq)
           ?f[y + m - 1][x + m - 1] = mySq
             A3 -= w[5] * mySq
-        
+
         m = 1
         for _ = 0..1984  // Waiting for a while loops...
           ?!(y - m >= minM & x - m >= minN & f[y - m][x - m] ! -mySq)
@@ -492,16 +492,16 @@ func evaluatePos(a, mySq)
 
         ?nPos[4] > 4
           isDraw = false
-        
+
         ?nPos[1] > 4
           dirA[1] = A1 * A1
 
         ?nPos[2] > 4
           dirA[2] = A2 * A2
-        
+
         ?nPos[3] > 4
           dirA[3] = A3 * A3
-        
+
         ?nPos[4] > 4
           dirA[4] = A4 * A4
 
@@ -511,12 +511,12 @@ func evaluatePos(a, mySq)
           ?dirA[k] >= A1
             A2 = A1
             A1 = dirA[k]
-        
+
         a[y][x] = A1 + A2
-      
+
       ?a[y][x] > maxA
         maxA = a[y][x]
-  
+
   return maxA
 
 func hasNeighbors(x, y)
@@ -533,7 +533,7 @@ func hasNeighbors(x, y)
       return true  // Top left
     ?x + 1 < fieldSize & f[y - 1][x + 1] ! 0
       return true  // Top right
-  
+
   ?y + 1 < fieldSize
     ?f[y + 1][x] ! 0
       return true  // Bottom
@@ -541,9 +541,9 @@ func hasNeighbors(x, y)
       return true  // Bottom left
     ?x + 1 < fieldSize & f[y + 1][x + 1] ! 0
       return true  // Bottom right
-  
+
   return false
-  
+
 func winningPos(x, y, mySq)
   var test3 = 0
   var test4 = 0
@@ -551,7 +551,7 @@ func winningPos(x, y, mySq)
   var L = 1
   var m = 1
   for _ = 0..1984  // Waiting for a while loops...
-    ?!(x + m < fieldSize & f[y][x + m] = mySq) 
+    ?!(x + m < fieldSize & f[y][x + m] = mySq)
       break
     L++
     m++
@@ -563,7 +563,7 @@ func winningPos(x, y, mySq)
       break
     L++
     m++
-  
+
   var m2 = m
   ?L > 4
     return winningMove
@@ -604,7 +604,7 @@ func winningPos(x, y, mySq)
   m2 = m
   ?L > 4
     return winningMove
-  
+
   ?y + m1 < fieldSize & f[y + m1][x] = 0
     side1 = true
   :
@@ -623,7 +623,7 @@ func winningPos(x, y, mySq)
       test4 = 1
     ?L = 3
       test3++
-  
+
   L = 1
   m = 1
   for _ = 0..1984  // Waiting for a while loops...
@@ -643,7 +643,7 @@ func winningPos(x, y, mySq)
   m2 = m
   ?L > 4
     return winningMove
-  
+
   ?y + m1 < fieldSize & x + m1 < fieldSize & f[y + m1][x + m1] = 0
     side1 = true
   :
@@ -701,10 +701,10 @@ func winningPos(x, y, mySq)
       test4 = 1
     ?L = 3
       test3++
-  
+
   ?test4
     return 8888888
-    
+
   ?test3 >= 2
     return 7777777
 
@@ -733,7 +733,7 @@ func main()
   music.Stop()
 
   // Enable half line mode
-  ?string.Size(fieldMark) = 1  
+  ?string.Size(fieldMark) = 1
     halfLineMode = 1
 
 // Block all inputs first 15 tics
